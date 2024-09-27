@@ -143,35 +143,35 @@ const pacientes = [
       ID_Medico: 1,
       ID_Paciente: 1,
       inicio: "10:00",
-      deshabilitada: false
+      deshabilitado: false
     },
     {
       fecha: "2024-09-28",
       ID_Medico: 2,
       ID_Paciente: 2,
       inicio: "11:00",
-      deshabilitada: false
+      deshabilitado: false
     },
     {
       fecha: "2024-09-29",
       ID_Medico: 3,
       ID_Paciente: 3,
       inicio: "09:30",
-      deshabilitada: false
+      deshabilitado: false
     },
     {
       fecha: "2024-09-30",
       ID_Medico: 4,
       ID_Paciente: 4,
       inicio: "08:00",
-      deshabilitada: false
+      deshabilitado: false
     },
     {
       fecha: "2024-10-01",
       ID_Medico: 5,
       ID_Paciente: 5,
       inicio: "12:30",
-      deshabilitada: false
+      deshabilitado: false
     }
   ];
   
@@ -179,58 +179,58 @@ const pacientes = [
   const fichas_medicas = [
     {
       ID_ficha: 1,
-      ID_paciente: 1,
-      ID_medico: 1,
+      ID_Paciente: 1,
+      ID_Medico: 1,
       alergias: "Ninguna",
       diagnosticos: "Hipertensión",
       tratamientos: "Dieta baja en sodio",
       ultima_modificacion: "2024-09-27T10:30:00",
       medicamentos: "Lisinopril",
-      deshabilitada: false
+      deshabilitado: false
     },
     {
       ID_ficha: 2,
-      ID_paciente: 2,
-      ID_medico: 2,
+      ID_Paciente: 2,
+      ID_Medico: 2,
       alergias: "Penicilina",
       diagnosticos: "Asma",
       tratamientos: "Inhalador",
       ultima_modificacion: "2024-09-28T11:30:00",
       medicamentos: "Albuterol",
-      deshabilitada: false
+      deshabilitado: false
     },
     {
       ID_ficha: 3,
-      ID_paciente: 3,
-      ID_medico: 3,
+      ID_Paciente: 3,
+      ID_Medico: 3,
       alergias: "Polen",
       diagnosticos: "Migraña",
       tratamientos: "Ejercicio regular",
       ultima_modificacion: "2024-09-29T09:00:00",
       medicamentos: "Ibuprofeno",
-      deshabilitada: false
+      deshabilitado: false
     },
     {
       ID_ficha: 4,
-      ID_paciente: 4,
-      ID_medico: 4,
+      ID_Paciente: 4,
+      ID_Medico: 4,
       alergias: "Ninguna",
       diagnosticos: "Anemia",
       tratamientos: "Suplementos de hierro",
       ultima_modificacion: "2024-09-30T08:30:00",
       medicamentos: "Hierro",
-      deshabilitada: false
+      deshabilitado: false
     },
     {
       ID_ficha: 5,
-      ID_paciente: 5,
-      ID_medico: 5,
+      ID_Paciente: 5,
+      ID_Medico: 5,
       alergias: "Mariscos",
       diagnosticos: "Dermatitis",
       tratamientos: "Cremas hidratantes",
       ultima_modificacion: "2024-10-01T12:00:00",
       medicamentos: "Corticoides tópicos",
-      deshabilitada: false
+      deshabilitado: false
     }
   ];
   
@@ -279,31 +279,31 @@ const pacientes = [
       ID_Paciente: 1,
       ID_Medico: 1,
       fecha_creacion: "2024-09-01",
-      deshabilitada: false
+      deshabilitado: false
     },
     {
       ID_Paciente: 2,
       ID_Medico: 2,
       fecha_creacion: "2024-09-02",
-      deshabilitada: false
+      deshabilitado: false
     },
     {
       ID_Paciente: 3,
       ID_Medico: 3,
       fecha_creacion: "2024-09-03",
-      deshabilitada: false
+      deshabilitado: false
     },
     {
       ID_Paciente: 4,
       ID_Medico: 4,
       fecha_creacion: "2024-09-04",
-      deshabilitada: false
+      deshabilitado: false
     },
     {
       ID_Paciente: 5,
       ID_Medico: 5,
       fecha_creacion: "2024-09-05",
-      deshabilitada: false
+      deshabilitado: false
     }
   ];
   
@@ -312,35 +312,35 @@ const pacientes = [
     {
       ID_Horario: 1,
       ID_Medico: 1,
-      dia: "Lunes",
+      dia: "L",
       inicio: "08:00",
       fin: "12:00"
     },
     {
       ID_Horario: 2,
       ID_Medico: 2,
-      dia: "Martes",
+      dia: "Ma",
       inicio: "09:00",
       fin: "13:00"
     },
     {
       ID_Horario: 3,
       ID_Medico: 3,
-      dia: "Miercoles",
+      dia: "Mi",
       inicio: "10:00",
       fin: "14:00"
     },
     {
       ID_Horario: 4,
       ID_Medico: 4,
-      dia: "Jueves",
+      dia: "J",
       inicio: "08:00",
       fin: "12:00"
     },
     {
       ID_Horario: 5,
       ID_Medico: 5,
-      dia: "Viernes",
+      dia: "V",
       inicio: "09:00",
       fin: "13:00"
     }

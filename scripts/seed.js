@@ -16,13 +16,13 @@ async function seedPacientes(client) {
   try {
     await client.sql`
       CREATE TABLE IF NOT EXISTS pacientes (
-        ID_paciente SERIAL PRIMARY KEY,
+        ID_Paciente SERIAL PRIMARY KEY,
         email VARCHAR(255) NOT NULL,
         contraseña VARCHAR(255) NOT NULL,
         nombre VARCHAR(255) NOT NULL,
         apellido VARCHAR(255) NOT NULL,
         domicilio VARCHAR(255),
-        telefono INT,
+        telefono BIGINT,
         fecha_nac DATE,
         deshabilitado BOOLEAN
       );
@@ -33,8 +33,8 @@ async function seedPacientes(client) {
     for (const paciente of pacientes) {
       const hashedPassword = await bcrypt.hash(paciente.contraseña, 10);
       await client.sql`
-        INSERT INTO pacientes (email, contraseña, nombre, apellido, domicilio, telefono, fecha_nac, deshabilitada)
-        VALUES (${paciente.email}, ${hashedPassword}, ${paciente.nombre}, ${paciente.apellido}, ${paciente.domicilio}, ${paciente.telefono}, ${paciente.fecha_nac}, ${paciente.deshabilitada});
+        INSERT INTO pacientes (ID_Paciente, email, contraseña, nombre, apellido, domicilio, telefono, fecha_nac, deshabilitado)
+        VALUES (${paciente.ID_Paciente} ,${paciente.email}, ${hashedPassword}, ${paciente.nombre}, ${paciente.apellido}, ${paciente.domicilio}, ${paciente.telefono}, ${paciente.fecha_nac}, ${paciente.deshabilitado});
       `;
     }
 
@@ -52,17 +52,17 @@ async function seedMedicos(client) {
   try {
     await client.sql`
       CREATE TABLE IF NOT EXISTS medicos (
-        ID_medico SERIAL PRIMARY KEY,
+        ID_Medico SERIAL PRIMARY KEY,
         email VARCHAR(255) NOT NULL,
         contraseña VARCHAR(255) NOT NULL,
         numero_matricula INT NOT NULL,
         nombre VARCHAR(255) NOT NULL,
         apellido VARCHAR(255) NOT NULL,
-        DNI INT NOT NULL,
+        dni INT NOT NULL,
         domicilio VARCHAR(255),
         fecha_nac DATE,
         especialidad VARCHAR(255),
-        telefono INT,
+        telefono BIGINT,
         tiempo_consulta INT,
         deshabilitado BOOLEAN
       );
@@ -73,8 +73,8 @@ async function seedMedicos(client) {
     for (const medico of medicos) {
       const hashedPassword = await bcrypt.hash(medico.contraseña, 10);
       await client.sql`
-        INSERT INTO medicos (email, contraseña, numero_matricula, nombre, apellido, DNI, domicilio, fecha_nac, especialidad, telefono, tiempo_consulta, deshabilitada)
-        VALUES (${medico.email}, ${hashedPassword}, ${medico.numero_matricula}, ${medico.nombre}, ${medico.apellido}, ${medico.DNI}, ${medico.domicilio}, ${medico.fecha_nac}, ${medico.especialidad}, ${medico.telefono}, ${medico.tiempo_consulta}, ${medico.deshabilitada});
+        INSERT INTO medicos (ID_Medico, email, contraseña, numero_matricula, nombre, apellido, dni, domicilio, fecha_nac, especialidad, telefono, tiempo_consulta, deshabilitado)
+        VALUES (${medico.ID_Medico}, ${medico.email}, ${hashedPassword}, ${medico.numero_matricula}, ${medico.nombre}, ${medico.apellido}, ${medico.dni}, ${medico.domicilio}, ${medico.fecha_nac}, ${medico.especialidad}, ${medico.telefono}, ${medico.tiempo_consulta}, ${medico.deshabilitado});
       `;
     }
 
@@ -92,14 +92,14 @@ async function seedEsPacienteDe(client) {
   try {
     await client.sql`
       CREATE TABLE IF NOT EXISTS es_paciente_de (
-        ID_paciente INT NOT NULL,
-        ID_medico INT NOT NULL,
+        ID_Paciente INT NOT NULL,
+        ID_Medico INT NOT NULL,
         fecha_creacion DATE NOT NULL,
         deshabilitado BOOLEAN,
         
-        PRIMARY KEY (ID_paciente, ID_medico),
-        FOREIGN KEY (ID_paciente) REFERENCES pacientes (ID_paciente),
-        FOREIGN KEY (ID_medico) REFERENCES medicos (ID_medico)
+        PRIMARY KEY (ID_Paciente, ID_Medico),
+        FOREIGN KEY (ID_Paciente) REFERENCES pacientes (ID_Paciente),
+        FOREIGN KEY (ID_Medico) REFERENCES medicos (ID_Medico)
       );
     `;
 
@@ -107,8 +107,8 @@ async function seedEsPacienteDe(client) {
 
     for (const relacion of es_paciente_de) {
       await client.sql`
-        INSERT INTO es_paciente_de (ID_paciente, ID_medico, fecha_creacion, deshabilitada)
-        VALUES (${relacion.ID_paciente}, ${relacion.ID_medico}, ${relacion.fecha_creacion}, ${relacion.deshabilitada});
+        INSERT INTO es_paciente_de (ID_Paciente, ID_Medico, fecha_creacion, deshabilitado)
+        VALUES (${relacion.ID_Paciente}, ${relacion.ID_Medico}, ${relacion.fecha_creacion}, ${relacion.deshabilitado});
       `;
     }
 
@@ -127,14 +127,14 @@ async function seedCitas(client) {
     await client.sql`
       CREATE TABLE IF NOT EXISTS citas (
         fecha DATE NOT NULL,
-        ID_medico INT NOT NULL,
-        ID_paciente INT NOT NULL,
+        ID_Medico INT NOT NULL,
+        ID_Paciente INT NOT NULL,
         inicio TIME NOT NULL,
         deshabilitado BOOLEAN,
         
-        PRIMARY KEY (fecha, ID_medico, ID_paciente),
-        FOREIGN KEY (ID_medico) REFERENCES medicos (ID_medico),
-        FOREIGN KEY (ID_paciente) REFERENCES pacientes (ID_paciente)
+        PRIMARY KEY (fecha, ID_Medico, ID_Paciente),
+        FOREIGN KEY (ID_Medico) REFERENCES medicos (ID_Medico),
+        FOREIGN KEY (ID_Paciente) REFERENCES pacientes (ID_Paciente)
       );
     `;
 
@@ -142,8 +142,8 @@ async function seedCitas(client) {
 
     for (const cita of citas) {
       await client.sql`
-        INSERT INTO citas (fecha, ID_medico, ID_paciente, inicio, deshabilitada)
-        VALUES (${cita.fecha}, ${cita.ID_medico}, ${cita.ID_paciente}, ${cita.inicio}, ${cita.deshabilitada});
+        INSERT INTO citas (fecha, ID_Medico, ID_Paciente, inicio, deshabilitado)
+        VALUES (${cita.fecha}, ${cita.ID_Medico}, ${cita.ID_Paciente}, ${cita.inicio}, ${cita.deshabilitado});
       `;
     }
 
@@ -161,24 +161,26 @@ async function seedFichaMedica(client) {
     await client.sql`
       CREATE TABLE IF NOT EXISTS ficha_medica (
         ID_ficha SERIAL PRIMARY KEY,
-        ID_paciente INT NOT NULL,
-        peso INT,
-        altura INT,
+        ID_Paciente INT NOT NULL,
+        ID_Medico INT NOT NULL,
         alergias VARCHAR(255),
-        enfermedades VARCHAR(255),
-        medicacion_actual VARCHAR(255),
-        grupo_sanguineo VARCHAR(10),
-        fecha_creacion DATE NOT NULL,
-        FOREIGN KEY (ID_paciente) REFERENCES pacientes(ID_paciente)
-      );
+        diagnosticos VARCHAR(255),
+        tratamientos VARCHAR(255),
+        ultima_modificacion TIMESTAMP NOT NULL,
+        medicamentos VARCHAR(255),
+        deshabilitado BOOLEAN,
+
+        FOREIGN KEY (ID_Paciente) REFERENCES pacientes(ID_Paciente),
+        FOREIGN KEY (ID_Medico) REFERENCES medicos(ID_Medico)
+      )
     `;
 
     console.log(`Created "ficha_medica" table`);
 
     for (const ficha of fichas_medicas) {
       await client.sql`
-        INSERT INTO ficha_medica (ID_paciente, peso, altura, alergias, enfermedades, medicacion_actual, grupo_sanguineo, fecha_creacion)
-        VALUES (${ficha.ID_paciente}, ${ficha.peso}, ${ficha.altura}, ${ficha.alergias}, ${ficha.enfermedades}, ${ficha.medicacion_actual}, ${ficha.grupo_sanguineo}, ${ficha.fecha_creacion});
+        INSERT INTO ficha_medica (ID_ficha, ID_Paciente, ID_Medico, alergias, diagnosticos, tratamientos, ultima_modificacion, medicamentos, deshabilitado)
+        VALUES (${ficha.ID_ficha}, ${ficha.ID_Paciente}, ${ficha.ID_Medico}, ${ficha.alergias}, ${ficha.diagnosticos}, ${ficha.tratamientos}, ${ficha.ultima_modificacion}, ${ficha.medicamentos}, ${ficha.deshabilitado});
       `;
     }
 
@@ -196,12 +198,12 @@ async function seedHorarios(client) {
   try {
     await client.sql`
       CREATE TABLE IF NOT EXISTS horarios (
-        ID_horario SERIAL PRIMARY KEY,
-        ID_medico INT NOT NULL,
-        dia_semana VARCHAR(20),
-        hora_inicio TIME,
-        hora_fin TIME,
-        FOREIGN KEY (ID_medico) REFERENCES medicos(ID_medico)
+        ID_Horario SERIAL PRIMARY KEY,
+        ID_Medico INT NOT NULL,
+        dia VARCHAR(2) NOT NULL CHECK (dia IN ('L', 'Ma', 'Mi', 'J', 'V', 'S', 'D')),
+        inicio TIME,
+        fin TIME,
+        FOREIGN KEY (ID_Medico) REFERENCES medicos(ID_Medico)
       );
     `;
 
@@ -209,8 +211,8 @@ async function seedHorarios(client) {
 
     for (const horario of horarios) {
       await client.sql`
-        INSERT INTO horarios (ID_medico, dia_semana, hora_inicio, hora_fin)
-        VALUES (${horario.ID_medico}, ${horario.dia_semana}, ${horario.hora_inicio}, ${horario.hora_fin});
+        INSERT INTO horarios (ID_Horario, ID_Medico, dia, inicio, fin)
+        VALUES (${horario.ID_Horario}, ${horario.ID_Medico}, ${horario.dia}, ${horario.inicio}, ${horario.fin});
       `;
     }
 
@@ -228,10 +230,10 @@ async function seedAdministradores(client) {
   try {
     await client.sql`
       CREATE TABLE IF NOT EXISTS administradores (
-        ID_administrador SERIAL PRIMARY KEY,
+        ID_Administrador SERIAL PRIMARY KEY,
         email VARCHAR(255) NOT NULL,
         contraseña VARCHAR(255) NOT NULL,
-        fecha DATE NOT NULL,
+        fecha_creacion DATE NOT NULL,
         deshabilitado BOOLEAN
       );
     `;
@@ -241,8 +243,8 @@ async function seedAdministradores(client) {
     for (const admin of administradores) {
       const hashedPassword = await bcrypt.hash(admin.contraseña, 10);
       await client.sql`
-        INSERT INTO administradores (email, contraseña, nombre, apellido)
-        VALUES (${admin.email}, ${hashedPassword}, ${admin.nombre}, ${admin.apellido});
+        INSERT INTO administradores (ID_Administrador, email, contraseña, fecha_creacion, deshabilitado)
+        VALUES (${admin.ID_Administrador}, ${admin.email}, ${hashedPassword}, ${admin.fecha_creacion}, ${admin.deshabilitado});
       `;
     }
 
