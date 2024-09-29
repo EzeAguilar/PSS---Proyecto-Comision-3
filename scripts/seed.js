@@ -1,10 +1,10 @@
 const { pacientes,
-    medicos,
-    citas,
-    fichas_medicas,
-    administradores,
-    es_paciente_de,
-    horarios } = require('./placeholder-data');
+  medicos,
+  citas,
+  fichas_medicas,
+  administradores,
+  es_paciente_de,
+  horarios } = require('./placeholder-data');
 
 const { db } = require('@vercel/postgres');
 const bcrypt = require('bcrypt');
@@ -12,7 +12,7 @@ require('dotenv').config();
 
 // Función para insertar datos en la tabla "Pacientes"
 async function seedPacientes(client) {
-  
+
   try {
     await client.sql`
       CREATE TABLE IF NOT EXISTS pacientes (
@@ -27,7 +27,7 @@ async function seedPacientes(client) {
         deshabilitado BOOLEAN
       );
     `;
-
+    // TODO: add dni to pacientes
     console.log(`Created "pacientes" table`);
 
     for (const paciente of pacientes) {
