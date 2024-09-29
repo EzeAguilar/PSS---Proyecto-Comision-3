@@ -6,9 +6,9 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 
 
-const EditPatientPage = async () => {
+const EditPatientPage = () => {
     const { patientID } = useParams<{ patientID: string }>();
-    const patientData = await fetchPatient(patientID);
+    const patientData = fetchPatient(patientID) as unknown as Patient;
 
     const [formData, setFormData] = useState<NewPatientFormData>({
         name: patientData.nombre || "",
