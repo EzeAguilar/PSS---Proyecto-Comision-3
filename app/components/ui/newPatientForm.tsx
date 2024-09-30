@@ -10,9 +10,9 @@ interface NewPatientFormProps {
 
 const NewPatientForm: React.FC<NewPatientFormProps> = ({ formData, handleInputChange, patientID = "" }) => {
 
-    if (patientID !== "") {
-        const patient = fetchPatient(patientID);
-    }
+    //if (patientID !== "") {
+      //  const patient = fetchPatient(patientID); COMENTADO PARA QUE ANDE DEPLOY
+    //}
 
     return (
         <div className="bg-gray-200 md:min-h-[450px] rounded-lg flex flex-wrap justify-between p-14">
