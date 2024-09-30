@@ -7,7 +7,7 @@ interface NewPatientFormProps {
     patientID?: string;
 }
 
-const NewPatientForm: React.FC<NewPatientFormProps> = ({ formData, handleInputChange, patientID = "" }) => {
+const NewPatientForm: React.FC<NewPatientFormProps> = ({ formData, handleInputChange, /*patientID = ""*/ }) => {
 
     //if (patientID !== "") {
       //  const patient = fetchPatient(patientID); COMENTADO PARA QUE ANDE DEPLOY
