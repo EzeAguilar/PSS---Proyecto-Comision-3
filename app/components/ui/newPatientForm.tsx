@@ -1,6 +1,5 @@
 import { NewPatientFormData } from "@/app/lib/utils";
 import CustomInput from "./customInput";
-import { fetchPatient } from "@/app/lib/data";
 
 interface NewPatientFormProps {
     formData: NewPatientFormData;
