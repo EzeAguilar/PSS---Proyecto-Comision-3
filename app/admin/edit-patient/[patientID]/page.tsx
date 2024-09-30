@@ -1,5 +1,5 @@
 import { fetchPatient } from "@/app/lib/data";
-import { Patient } from "@/app/lib/types";
+import { Patient } from "@/app/lib/utils";
 import EditPatientClientPage from "@/app/components/ui/edit-patient-client";
 
 interface Props {

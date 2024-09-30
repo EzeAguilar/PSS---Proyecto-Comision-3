@@ -1,9 +1,9 @@
-import { NewPatientFormData } from "@/app/lib/utils";
+import { Patient } from "@/app/lib/utils";
 import CustomInput from "./customInput";
 
 interface NewPatientFormProps {
-    formData: NewPatientFormData;
-    handleInputChange: (field: keyof NewPatientFormData, value: string | number) => void;
+    formData: Patient;
+    handleInputChange: (field: keyof Patient, value: string | number) => void;
     patientID?: string;
 }
 
@@ -20,8 +20,8 @@ const NewPatientForm: React.FC<NewPatientFormProps> = ({ formData, handleInputCh
                 label="Nombre"
                 placeholder="Nombre"
                 required
-                value={formData.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
+                value={formData.nombre}
+                onChange={(e) => handleInputChange('nombre', e.target.value)}
             />
             <CustomInput
                 type="number"
@@ -36,32 +36,32 @@ const NewPatientForm: React.FC<NewPatientFormProps> = ({ formData, handleInputCh
                 label="Apellido"
                 placeholder="Apellido"
                 required
-                value={formData.lastName}
-                onChange={(e) => handleInputChange('lastName', e.target.value)}
+                value={formData.apellido}
+                onChange={(e) => handleInputChange('apellido', e.target.value)}
             />
             <CustomInput
                 type="number"
                 label="Teléfono"
                 placeholder="2915447866"
                 required
-                value={formData.phone}
-                onChange={(e) => handleInputChange('phone', e.target.value)}
+                value={formData.telefono}
+                onChange={(e) => handleInputChange('telefono', e.target.value)}
             />
             <CustomInput
                 type="text"
                 label="Dirección"
                 placeholder="Brown 100"
                 required
-                value={formData.address}
-                onChange={(e) => handleInputChange('address', e.target.value)}
+                value={formData.domicilio}
+                onChange={(e) => handleInputChange('domicilio', e.target.value)}
             />
             <CustomInput
                 type="text"
                 label="Fecha de nacimiento"
                 placeholder="dd/mm/yyyy"
                 required
-                value={formData.birthDate}
-                onChange={(e) => handleInputChange('birthDate', e.target.value)}
+                value={formData.fecha_nac}
+                onChange={(e) => handleInputChange('fecha_nac', e.target.value)}
             />
             <CustomInput
                 type="email"
@@ -76,8 +76,8 @@ const NewPatientForm: React.FC<NewPatientFormProps> = ({ formData, handleInputCh
                 label="Contraseña"
                 placeholder="********"
                 required
-                value={formData.password}
-                onChange={(e) => handleInputChange('password', e.target.value)}
+                value={formData.contraseña}
+                onChange={(e) => handleInputChange('contraseña', e.target.value)}
             />
         </div>
     );

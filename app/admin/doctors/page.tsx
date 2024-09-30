@@ -1,10 +1,25 @@
 
 
 const DoctorsPage = () => {
+    const router = useRouter();
+
+    const handleNavigation = (path: string) => {
+        router.push(path);
+    }
     return (
-        <div>
-            <h1>Medicos</h1>
-        </div>
+    <div>
+      <div className="flex items-center gap-10">
+        <h1>Medicos</h1>
+        <Button
+          size="lg"
+          variant="default"
+          className="bg-red-500"
+          onClick={() => handleNavigation(PATH_OPTIONS.newDoctor)} //HACER NEW DOCTOR
+        >
+          Agregar
+        </Button>
+      </div>
+    </div>
     );
 }
 

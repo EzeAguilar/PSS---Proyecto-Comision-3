@@ -4,23 +4,26 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import NewPatientForm from "@/app/components/ui/newPatientForm";
 import { Button } from "@/app/components/ui/button";
-import { NewPatientFormData } from "@/app/lib/utils";
+import { Patient } from "@/app/lib/utils";
+import { insertPatient } from "@/app/lib/data";
 
 type FormFieldValue = string | number;
 
 const NewPatientPage = () => {
-    const [form, setForm] = useState<NewPatientFormData>({
-        name: "",
-        dni: undefined,
-        lastName: "",
-        phone: undefined,
-        address: "",
-        birthDate: "",
+    const [form, setForm] = useState<Patient>({
+        ID_Paciente: 1000,
+        dni: 0,
+        nombre: "",
+        apellido: "",
+        telefono: undefined,
+        domicilio: "",
+        fecha_nac: "",
         email: "",
-        password: "",
+        contraseña: "",
+        deshabilitado: true,
     });
 
-    const handleInputChange = (field: keyof NewPatientFormData, value: FormFieldValue) => {
+    const handleInputChange = (field: keyof Patient, value: FormFieldValue) => {
         setForm((prevForm) => ({
             ...prevForm,
             [field]: value,
@@ -47,6 +50,8 @@ const NewPatientPage = () => {
         } else {
             console.log("Formulario no es válido");
         }
+
+        insertPatient(form);
     };
 
     const router = useRouter();

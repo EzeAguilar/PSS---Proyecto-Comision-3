@@ -3,9 +3,9 @@
 import { useState, FormEvent } from "react";
 import { Button } from "@/app/components/ui/button";
 import NewPatientForm from "@/app/components/ui/newPatientForm";
-import { Patient } from "@/app/lib/types";
-import { NewPatientFormData } from "@/app/lib/utils";
+import { Patient } from "@/app/lib/utils";
 import { useRouter } from "next/navigation";
+import { updatePatient } from "@/app/lib/data";
 
 type FormFieldValue = string | number;
 
@@ -16,18 +16,20 @@ interface EditPatientClientPageProps {
 const EditPatientClientPage = ({ patientData }: EditPatientClientPageProps) => {
     const router = useRouter();
 
-    const [formData, setFormData] = useState<NewPatientFormData>({
-        name: patientData.nombre || "",
-        dni: patientData.ID_Paciente /* TODO: change this for the dni*/ || undefined,
-        lastName: patientData.apellido || "",
-        phone: patientData.telefono || undefined,
-        address: patientData.domicilio || "",
-        birthDate: patientData.fecha_nac || "",
-        email: patientData.email || "",
-        password: "",
+    const [formData, setFormData] = useState<Patient>({
+        ID_Paciente: patientData.ID_Paciente ,
+        dni: patientData.dni,
+        nombre: patientData.nombre,
+        apellido: patientData.apellido,
+        telefono: patientData.telefono,
+        domicilio: patientData.domicilio,
+        fecha_nac: patientData.fecha_nac,
+        email: patientData.email,
+        contraseña: patientData.contraseña,
+        deshabilitado: false,
     });
 
-    const handleInputChange = (field: keyof NewPatientFormData, value: FormFieldValue) => {
+    const handleInputChange = (field: keyof Patient, value: FormFieldValue) => {
         setFormData((prevForm) => ({
             ...prevForm,
             [field]: value,
@@ -54,6 +56,8 @@ const EditPatientClientPage = ({ patientData }: EditPatientClientPageProps) => {
         } else {
             console.log("Formulario no es válido");
         }
+
+        updatePatient(formData);
     };
 
     return (

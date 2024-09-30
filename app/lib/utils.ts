@@ -9,13 +9,15 @@ export const enum PATH_OPTIONS {
     newPatient = "new-patient",
   };
 
-  export interface NewPatientFormData {
-    name: string;
+  export type Patient = {
+    ID_Paciente: number | undefined;
+    nombre: string;
     dni: number | undefined;
-    lastName: string;
-    phone: number | undefined;
-    address: string;
-    birthDate: string;
+    apellido: string;
+    contraseña: string;
+    fecha_nac: string;
+    domicilio: string;
+    telefono: number | undefined;
     email: string;
-    password: string;
-}
+    deshabilitado: boolean;
+};
