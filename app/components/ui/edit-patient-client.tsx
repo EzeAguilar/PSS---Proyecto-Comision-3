@@ -39,6 +39,8 @@ const EditPatientClientPage = ({ patientData }: EditPatientClientPageProps) => {
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        console.log(formData);
+
         const allFieldsFilled = Object.values(formData).every((field) => {
             if (typeof field === "string") {
                 return field.trim() !== "";
@@ -50,7 +52,7 @@ const EditPatientClientPage = ({ patientData }: EditPatientClientPageProps) => {
             console.log("Por favor, complete todos los campos.");
             return;
         }
-
+        
         if (e.currentTarget.checkValidity()) {
             console.log("Datos del formulario:", formData);
         } else {

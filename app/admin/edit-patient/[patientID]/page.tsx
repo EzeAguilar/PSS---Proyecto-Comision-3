@@ -3,7 +3,7 @@ import { Patient } from "@/app/lib/utils";
 import EditPatientClientPage from "@/app/components/ui/edit-patient-client";
 
 interface Props {
-    params: { patientID: string };
+    params: { patientID: number };
 }
 
 const EditPatientServerPage = async ({ params }: Props) => {

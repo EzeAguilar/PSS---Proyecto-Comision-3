@@ -12,7 +12,7 @@ type FormFieldValue = string | number;
 const NewPatientPage = () => {
     const [form, setForm] = useState<Patient>({
         ID_Paciente: 1000,
-        dni: 0,
+        dni: undefined,
         nombre: "",
         apellido: "",
         telefono: undefined,

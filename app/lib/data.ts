@@ -2,15 +2,15 @@
 import { sql } from "@vercel/postgres";
 import { Patient } from "./utils";
 
-export async function fetchPatient(id: string): Promise<Patient> {
+export async function fetchPatient(id: number): Promise<Patient> {
     const result = await sql<Patient>`
     SELECT * FROM pacientes WHERE ID_Paciente = ${id}
     `;
 
     const patient = result.rows.map((row) => {
         return {
-            ID_Paciente: row.ID_Paciente,
-            dni: row.dni,
+            ID_Paciente: id,
+            dni: 4000,
             nombre: row.nombre,
             apellido: row.apellido,
             fecha_nac: row.fecha_nac,
