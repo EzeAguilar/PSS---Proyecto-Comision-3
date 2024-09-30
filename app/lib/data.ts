@@ -8,12 +8,14 @@ export async function fetchPatient(id: number): Promise<Patient> {
     `;
 
     const patient = result.rows.map((row) => {
+        const date = new Date(row.fecha_nac);
+        const formattedDate = date.toLocaleDateString('en-GB'); 
         return {
             ID_Paciente: id,
             dni: 4000,
             nombre: row.nombre,
             apellido: row.apellido,
-            fecha_nac: row.fecha_nac,
+            fecha_nac: formattedDate,
             domicilio: row.domicilio,
             telefono: row.telefono,
             email: row.email,
