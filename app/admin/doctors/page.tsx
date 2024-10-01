@@ -44,6 +44,13 @@ const DoctorsPage = () => {
     handleNavigation(`${PATH_OPTIONS.editDoctor}/${doctorId}`);
   };
 
+  const handleDeleteDoctor = async (doctorId: number | undefined) => {
+    console.log("Deleting doctor with ID:", doctorId); // Verifica que el ID se está pasando correctamente
+    await deleteDoctor(doctorId);
+    const updatedDoctors = await fetchAllDoctors();
+    setFilteredDoctors(updatedDoctors);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       {/* Encabezado con barra de búsqueda y botón */}
@@ -102,7 +109,7 @@ const DoctorsPage = () => {
                   <Button 
                    className="bg-red-600 text-white px-12 py-2 rounded-md"
                   
-                  onClick={() => deleteDoctor(medico.id_medico)}>Eliminar</Button>
+                  onClick={() => handleDeleteDoctor(medico.id_medico)}>Eliminar</Button>
                 </td>
               </tr>
             ))}
