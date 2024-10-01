@@ -5,7 +5,6 @@ import { searchDoctors, deleteDoctor, fetchAllDoctors } from "@/app/lib/data";
 import { Doctor, PATH_OPTIONS } from "@/app/lib/utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 
 const DoctorsPage = () => {
   const router = useRouter();
