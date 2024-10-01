@@ -5,10 +5,10 @@ import { searchDoctors, deleteDoctor } from "@/app/lib/data";
 import { Doctor, PATH_OPTIONS } from "@/app/lib/utils";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Image from "next/image";
 
 const DoctorsPage = () => {
   const router = useRouter();
-  const [query, setQuery] = useState("");
   const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);
 
   // Maneja la navegación a la página de creación de doctores
@@ -18,7 +18,7 @@ const DoctorsPage = () => {
 
   // Función para manejar la búsqueda de médicos
   const handleSearch = async (value: string) => {
-    setQuery(value);
+    
     if (value.length > 0) {
       const results = await searchDoctors(value);
       setFilteredDoctors(results);
@@ -84,12 +84,12 @@ const DoctorsPage = () => {
                 <td className="px-4 py-2 border">{medico.telefono}</td>
                 <td className="px-4 py-2 border text-center">
                   <button onClick={() => editDoctor(medico.ID_Medico)}>
-                    <img src="/path/to/edit-icon.svg" alt="Editar" />
+                    <Image src="/path/to/edit-icon.svg" alt="Editar" />
                   </button>
                 </td>
                 <td className="px-4 py-2 border text-center">
                   <button onClick={() => deleteDoctor(medico.ID_Medico)}>
-                    <img src="/path/to/delete-icon.svg" alt="Eliminar" />
+                    <Image src="/path/to/delete-icon.svg" alt="Eliminar" />
                   </button>
                 </td>
               </tr>
