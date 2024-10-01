@@ -2,8 +2,11 @@
 import { sql } from "@vercel/postgres";
 import { Patient } from "./utils";
 import { Doctor } from "./utils";
+import { revalidatePath } from 'next/cache'
+import { unstable_noStore as noStore } from 'next/cache';
 
 export async function fetchPatient(id: number): Promise<Patient> {
+    noStore();
     const result = await sql<Patient>`
     SELECT * FROM pacientes WHERE ID_Paciente = ${id}
     `;
@@ -59,6 +62,7 @@ export async function editDoctor(doctor: Doctor): Promise<void> {
 }
 
 export async function deleteDoctor(id: number | undefined): Promise<void> {
+    
     if (id === undefined) {
         console.error("ID is undefined, cannot delete doctor");
         return;
@@ -100,11 +104,14 @@ export async function deleteDoctor(id: number | undefined): Promise<void> {
         console.error(`Error deleting doctor with ID ${id}:`, error);
         throw error;
     }
+
+    revalidatePath('/admin/doctors');
 }
 
 
 
 export async function searchDoctors(query: string): Promise<Doctor[]> {
+    noStore();
     const searchQuery = `%${query}%`; // Para buscar coincidencias parciales
 
 
@@ -119,6 +126,7 @@ export async function searchDoctors(query: string): Promise<Doctor[]> {
   }
 
   export async function fetchAllDoctors(): Promise<Doctor[]> {
+    
     const result = await sql<Doctor>`
     SELECT * FROM medicos
     `;
