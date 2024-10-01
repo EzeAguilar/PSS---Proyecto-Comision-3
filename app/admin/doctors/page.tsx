@@ -1,15 +1,24 @@
 'use client'
 
 import { Button } from "@/app/components/ui/button";
-import { searchDoctors, deleteDoctor } from "@/app/lib/data";
+import { searchDoctors, deleteDoctor, fetchAllDoctors } from "@/app/lib/data";
 import { Doctor, PATH_OPTIONS } from "@/app/lib/utils";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
 const DoctorsPage = () => {
   const router = useRouter();
   const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);
+
+
+  useEffect(() => {
+    const loadDoctors = async () => {
+      const allDoctors = await fetchAllDoctors();
+      setFilteredDoctors(allDoctors);
+    };
+    loadDoctors();
+  }, []);
 
   // Maneja la navegación a la página de creación de doctores
   const handleNavigation = (path: string) => {
@@ -18,15 +27,16 @@ const DoctorsPage = () => {
 
   // Función para manejar la búsqueda de médicos
   const handleSearch = async (value: string) => {
-    
     if (value.length > 0) {
       const results = await searchDoctors(value);
       setFilteredDoctors(results);
-    } else {
-      setFilteredDoctors([]); // Resetea si no hay búsqueda
+    } else if (value.length === 0) {
+      const allDoctors = await fetchAllDoctors();
+      setFilteredDoctors(allDoctors); // Mostrar todos los médicos si no hay búsqueda
     }
   };
 
+  
   // Función para editar un doctor
   const editDoctor = (id: number | undefined) => {
     const doctorId = id ?? 0; // Usa 0 u otro valor predeterminado si id es undefined
@@ -53,7 +63,7 @@ const DoctorsPage = () => {
         <Button
           size="lg"
           variant="default"
-          className="bg-red-500 text-white px-4 py-2 rounded-md"
+          className="bg-green-500 text-white px-4 py-2 rounded-md"
           onClick={() => handleNavigation(PATH_OPTIONS.newDoctor)}
         >
           Agregar
@@ -76,21 +86,22 @@ const DoctorsPage = () => {
           </thead>
           <tbody>
             {filteredDoctors.map((medico) => (
-              <tr key={medico.ID_Medico}>
+              <tr key={medico.id_Medico}>
                 <td className="px-4 py-2 border">{medico.nombre}</td>
                 <td className="px-4 py-2 border">{medico.apellido}</td>
                 <td className="px-4 py-2 border">{medico.dni}</td>
                 <td className="px-4 py-2 border">{medico.domicilio}</td>
                 <td className="px-4 py-2 border">{medico.telefono}</td>
                 <td className="px-4 py-2 border text-center">
-                  <button onClick={() => editDoctor(medico.ID_Medico)}>
-                    <Image src="/path/to/edit-icon.svg" alt="Editar" />
-                  </button>
+                  <Button  
+                  className="bg-blue-600 text-white px-12 py-2 rounded-md"
+                  onClick={() => editDoctor(medico.id_Medico)}>Editar</Button>
                 </td>
                 <td className="px-4 py-2 border text-center">
-                  <button onClick={() => deleteDoctor(medico.ID_Medico)}>
-                    <Image src="/path/to/delete-icon.svg" alt="Eliminar" />
-                  </button>
+                  <Button 
+                   className="bg-red-600 text-white px-12 py-2 rounded-md"
+                  
+                  onClick={() => deleteDoctor(medico.id_Medico)}>Eliminar</Button>
                 </td>
               </tr>
             ))}
