@@ -11,7 +11,7 @@ type FormFieldValue = string | number;
 
 const NewDoctorPage = () => {
     const [form, setForm] = useState<Doctor>({
-        id_Medico: 1000,
+        id_medico: 1000,
         email: "",
         contraseña: "",
         numero_matricula: undefined,
@@ -67,13 +67,13 @@ const NewDoctorPage = () => {
                 <Button
                     type="submit"
                     className="bg-red-600 text-white px-4 py-2 rounded-md"
+                    onClick={() => router.push('/admin/doctors')}
                 >
                     Guardar
                 </Button>
                 <Button
                     variant="destructive"
                     className="bg-gray-700 text-white px-4 py-2 rounded-md"
-                    onClick={() => router.push('/admin/doctors')}
                 >
                     Cancelar
                 </Button>

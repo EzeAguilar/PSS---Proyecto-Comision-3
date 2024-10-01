@@ -3,10 +3,10 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
   }
   
 export const enum PATH_OPTIONS {
-    patients = "patients",
-    doctors = "doctors",
-    calendar = "calendar",
-    newPatient = "new-patient",
+    patients = "/admin",
+    doctors = "/admin/doctors",
+    calendar = "/admin/calendar",
+    newPatient = "/admin/new-patient",
     newDoctor = "new-doctor",
     editDoctor = "edit-doctor",
   };
@@ -25,7 +25,7 @@ export const enum PATH_OPTIONS {
 };
 
 export type Doctor = {
-  id_Medico: number | undefined;
+  id_medico: number | undefined;
   email: string;
   contraseña: string;
   numero_matricula: number | undefined;

@@ -2,8 +2,11 @@
 import { sql } from "@vercel/postgres";
 import { Patient } from "./utils";
 import { Doctor } from "./utils";
+import { redirect } from 'next/navigation';
+import { unstable_noStore as noStore } from 'next/cache';
 
 export async function fetchPatient(id: number): Promise<Patient> {
+    noStore();
     const result = await sql<Patient>`
     SELECT * FROM pacientes WHERE ID_Paciente = ${id}
     `;
@@ -53,22 +56,62 @@ export async function editDoctor(doctor: Doctor): Promise<void> {
     await sql`
     UPDATE medicos
     SET email = ${doctor.email}, contraseña = ${doctor.contraseña}, numero_matricula = ${doctor.numero_matricula}, nombre = ${doctor.nombre}, apellido = ${doctor.apellido}, dni = ${doctor.dni}, domicilio = ${doctor.domicilio}, fecha_nac = ${doctor.fecha_nac}, especialidad = ${doctor.especialidad}, telefono = ${doctor.telefono}, tiempo_consulta = ${doctor.tiempo_consulta}, deshabilitado = ${doctor.deshabilitado}
-    WHERE ID_Medico = ${doctor.id_Medico}
+    WHERE ID_Medico = ${doctor.id_medico}
     `;
     //CHEQUEAR, LO HIZO COPILOT
 }
+
 export async function deleteDoctor(id: number | undefined): Promise<void> {
+    
     if (id === undefined) {
         console.error("ID is undefined, cannot delete doctor");
         return;
     }
-    
-    await sql`
-    DELETE FROM medicos
-    WHERE ID_Medico = ${id}
-    `;
+
+    try {
+
+        await sql`
+        DELETE FROM ficha_medica
+        WHERE ID_Medico = ${id};
+        `;
+
+        // Eliminar las citas del médico
+        await sql`
+        DELETE FROM citas
+        WHERE ID_Medico = ${id};
+        `;
+
+        // Eliminar los horarios del médico
+        await sql`
+        DELETE FROM horarios
+        WHERE ID_Medico = ${id};
+        `;
+
+        // Eliminar las relaciones en "es_paciente_de"
+        await sql`
+        DELETE FROM es_paciente_de
+        WHERE ID_Medico = ${id};
+        `;
+
+        // Finalmente, eliminar el médico
+        await sql`
+        DELETE FROM medicos
+        WHERE ID_Medico = ${id};
+        `;
+
+        console.log(`Doctor with ID ${id} deleted successfully.`);
+    } catch (error) {
+        console.error(`Error deleting doctor with ID ${id}:`, error);
+        throw error;
+    }
+
+    redirect('/admin/doctors');
 }
+
+
+
 export async function searchDoctors(query: string): Promise<Doctor[]> {
+    noStore();
     const searchQuery = `%${query}%`; // Para buscar coincidencias parciales
 
 
@@ -83,6 +126,7 @@ export async function searchDoctors(query: string): Promise<Doctor[]> {
   }
 
   export async function fetchAllDoctors(): Promise<Doctor[]> {
+    noStore();
     const result = await sql<Doctor>`
     SELECT * FROM medicos
     `;

@@ -14,7 +14,9 @@ const DoctorsPage = () => {
   useEffect(() => {
     const loadDoctors = async () => {
       const allDoctors = await fetchAllDoctors();
+      console.log("Datos de todos los doctores:", allDoctors); // Imprime todos los datos de los doctores
       setFilteredDoctors(allDoctors);
+      console.log(allDoctors[0].id_medico);
     };
     loadDoctors();
   }, []);
@@ -85,7 +87,7 @@ const DoctorsPage = () => {
           </thead>
           <tbody>
             {filteredDoctors.map((medico) => (
-              <tr key={medico.id_Medico}>
+              <tr key={medico.id_medico}>
                 <td className="px-4 py-2 border">{medico.nombre}</td>
                 <td className="px-4 py-2 border">{medico.apellido}</td>
                 <td className="px-4 py-2 border">{medico.dni}</td>
@@ -94,13 +96,13 @@ const DoctorsPage = () => {
                 <td className="px-4 py-2 border text-center">
                   <Button  
                   className="bg-blue-600 text-white px-12 py-2 rounded-md"
-                  onClick={() => editDoctor(medico.id_Medico)}>Editar</Button>
+                  onClick={() => editDoctor(medico.id_medico)}>Editar</Button>
                 </td>
                 <td className="px-4 py-2 border text-center">
                   <Button 
                    className="bg-red-600 text-white px-12 py-2 rounded-md"
                   
-                  onClick={() => deleteDoctor(medico.id_Medico)}>Eliminar</Button>
+                  onClick={() => deleteDoctor(medico.id_medico)}>Eliminar</Button>
                 </td>
               </tr>
             ))}
