@@ -7,6 +7,8 @@ export const enum PATH_OPTIONS {
     doctors = "doctors",
     calendar = "calendar",
     newPatient = "new-patient",
+    newDoctor = "new-doctor",
+    editDoctor = "edit-doctor",
   };
 
   export type Patient = {
@@ -20,4 +22,20 @@ export const enum PATH_OPTIONS {
     telefono: number | undefined;
     email: string;
     deshabilitado: boolean;
+};
+
+export type Doctor = {
+  ID_Medico: number | undefined;
+  email: string;
+  contraseña: string;
+  numero_matricula: number | undefined;
+  nombre: string;
+  apellido: string;
+  dni: number | undefined;
+  domicilio: string;
+  fecha_nac: string;
+  especialidad: string;
+  telefono: number | undefined;
+  tiempo_consulta: number | undefined;
+  deshabilitado: boolean;
 };

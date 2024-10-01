@@ -1,6 +1,7 @@
 "use server"
 import { sql } from "@vercel/postgres";
 import { Patient } from "./utils";
+import { Doctor } from "./utils";
 
 export async function fetchPatient(id: number): Promise<Patient> {
     const result = await sql<Patient>`
@@ -40,3 +41,42 @@ export async function updatePatient(patient: Patient): Promise<void> {
     WHERE ID_Paciente = ${patient.ID_Paciente}
     `;
 }
+
+export async function insertDoctor(doctor: Doctor): Promise<void> {
+    await sql`
+    INSERT INTO medicos (email, contraseña, numero_matricula, nombre, apellido, dni, domicilio, fecha_nac, especialidad, telefono, tiempo_consulta, deshabilitado)
+    VALUES (${doctor.email}, ${doctor.contraseña}, ${doctor.numero_matricula}, ${doctor.nombre}, ${doctor.apellido}, ${doctor.dni}, ${doctor.domicilio}, ${doctor.fecha_nac}, ${doctor.especialidad}, ${doctor.telefono}, ${doctor.tiempo_consulta}, ${doctor.deshabilitado})
+    `;
+}
+
+export async function editDoctor(doctor: Doctor): Promise<void> {
+    await sql`
+    UPDATE medicos
+    SET email = ${doctor.email}, contraseña = ${doctor.contraseña}, numero_matricula = ${doctor.numero_matricula}, nombre = ${doctor.nombre}, apellido = ${doctor.apellido}, dni = ${doctor.dni}, domicilio = ${doctor.domicilio}, fecha_nac = ${doctor.fecha_nac}, especialidad = ${doctor.especialidad}, telefono = ${doctor.telefono}, tiempo_consulta = ${doctor.tiempo_consulta}, deshabilitado = ${doctor.deshabilitado}
+    WHERE ID_Medico = ${doctor.ID_Medico}
+    `;
+    //CHEQUEAR, LO HIZO COPILOT
+}
+export async function deleteDoctor(id: number | undefined): Promise<void> {
+    if (id === undefined) {
+        console.error("ID is undefined, cannot delete doctor");
+        return;
+    }
+    
+    await sql`
+    DELETE FROM medicos
+    WHERE ID_Medico = ${id}
+    `;
+}
+export async function searchDoctors(query: string): Promise<Doctor[]> {
+    const searchQuery = `%${query}%`; // Para buscar coincidencias parciales
+  
+    const result = await sql<Doctor>`
+      SELECT * FROM medicos
+      WHERE nombre ILIKE ${searchQuery}
+      OR apellido ILIKE ${searchQuery}
+      OR CAST(dni AS TEXT) ILIKE ${searchQuery};
+    `;
+  
+    return result.rows;
+  }
