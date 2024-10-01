@@ -25,7 +25,7 @@ export const enum PATH_OPTIONS {
 };
 
 export type Doctor = {
-  id_Medico: number | undefined;
+  ID_Medico: number | undefined;
   email: string;
   contraseña: string;
   numero_matricula: number | undefined;
