@@ -53,7 +53,7 @@ export async function editDoctor(doctor: Doctor): Promise<void> {
     await sql`
     UPDATE medicos
     SET email = ${doctor.email}, contraseña = ${doctor.contraseña}, numero_matricula = ${doctor.numero_matricula}, nombre = ${doctor.nombre}, apellido = ${doctor.apellido}, dni = ${doctor.dni}, domicilio = ${doctor.domicilio}, fecha_nac = ${doctor.fecha_nac}, especialidad = ${doctor.especialidad}, telefono = ${doctor.telefono}, tiempo_consulta = ${doctor.tiempo_consulta}, deshabilitado = ${doctor.deshabilitado}
-    WHERE ID_Medico = ${doctor.ID_Medico}
+    WHERE ID_Medico = ${doctor.id_Medico}
     `;
     //CHEQUEAR, LO HIZO COPILOT
 }
@@ -70,7 +70,8 @@ export async function deleteDoctor(id: number | undefined): Promise<void> {
 }
 export async function searchDoctors(query: string): Promise<Doctor[]> {
     const searchQuery = `%${query}%`; // Para buscar coincidencias parciales
-  
+
+
     const result = await sql<Doctor>`
       SELECT * FROM medicos
       WHERE nombre ILIKE ${searchQuery}
@@ -80,3 +81,10 @@ export async function searchDoctors(query: string): Promise<Doctor[]> {
   
     return result.rows;
   }
+
+  export async function fetchAllDoctors(): Promise<Doctor[]> {
+    const result = await sql<Doctor>`
+    SELECT * FROM medicos
+    `;
+    return result.rows;
+}
