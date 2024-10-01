@@ -2,7 +2,6 @@
 import { sql } from "@vercel/postgres";
 import { Patient } from "./utils";
 import { Doctor } from "./utils";
-import { redirect } from 'next/navigation';
 import { unstable_noStore as noStore } from 'next/cache';
 
 export async function fetchPatient(id: number): Promise<Patient> {
@@ -104,8 +103,6 @@ export async function deleteDoctor(id: number | undefined): Promise<void> {
         console.error(`Error deleting doctor with ID ${id}:`, error);
         throw error;
     }
-
-    redirect('/admin/doctors');
 }
 
 
