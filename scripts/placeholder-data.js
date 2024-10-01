@@ -1,7 +1,6 @@
 // Paciente
 const pacientes = [
     {
-      ID_Paciente: 1,
       email: "juan.perez@mail.com",
       contraseña: "password123",
       nombre: "Juan",
@@ -12,7 +11,6 @@ const pacientes = [
       deshabilitado: false
     },
     {
-      ID_Paciente: 2,
       email: "maria.gomez@mail.com",
       contraseña: "mariaPass456",
       nombre: "Maria",
@@ -23,7 +21,6 @@ const pacientes = [
       deshabilitado: false
     },
     {
-      ID_Paciente: 3,
       email: "carlos.lopez@mail.com",
       contraseña: "carlos789",
       nombre: "Carlos",
@@ -34,7 +31,6 @@ const pacientes = [
       deshabilitado: false
     },
     {
-      ID_Paciente: 4,
       email: "ana.martinez@mail.com",
       contraseña: "ana123",
       nombre: "Ana",
@@ -45,7 +41,6 @@ const pacientes = [
       deshabilitado: false
     },
     {
-      ID_Paciente: 5,
       email: "luis.sanchez@mail.com",
       contraseña: "luispass123",
       nombre: "Luis",
@@ -60,7 +55,6 @@ const pacientes = [
   // Médico
   const medicos = [
     {
-      ID_Medico: 1,
       email: "medico1@mail.com",
       contraseña: "medicoPass123",
       numero_matricula: 1111,
@@ -75,7 +69,6 @@ const pacientes = [
       deshabilitado: false
     },
     {
-      ID_Medico: 2,
       email: "medico2@mail.com",
       contraseña: "medicoPass456",
       numero_matricula: 2222,
@@ -90,7 +83,6 @@ const pacientes = [
       deshabilitado: false
     },
     {
-      ID_Medico: 3,
       email: "medico3@mail.com",
       contraseña: "medicoPass789",
       numero_matricula: 3333,
@@ -105,7 +97,6 @@ const pacientes = [
       deshabilitado: false
     },
     {
-      ID_Medico: 4,
       email: "medico4@mail.com",
       contraseña: "medicoPass101",
       numero_matricula: 4444,
@@ -120,7 +111,6 @@ const pacientes = [
       deshabilitado: false
     },
     {
-      ID_Medico: 5,
       email: "medico5@mail.com",
       contraseña: "medicoPass202",
       numero_matricula: 5555,
@@ -178,7 +168,6 @@ const pacientes = [
   // Ficha médica
   const fichas_medicas = [
     {
-      ID_ficha: 1,
       ID_Paciente: 1,
       ID_Medico: 1,
       alergias: "Ninguna",
@@ -189,7 +178,6 @@ const pacientes = [
       deshabilitado: false
     },
     {
-      ID_ficha: 2,
       ID_Paciente: 2,
       ID_Medico: 2,
       alergias: "Penicilina",
@@ -200,7 +188,6 @@ const pacientes = [
       deshabilitado: false
     },
     {
-      ID_ficha: 3,
       ID_Paciente: 3,
       ID_Medico: 3,
       alergias: "Polen",
@@ -211,7 +198,6 @@ const pacientes = [
       deshabilitado: false
     },
     {
-      ID_ficha: 4,
       ID_Paciente: 4,
       ID_Medico: 4,
       alergias: "Ninguna",
@@ -222,7 +208,6 @@ const pacientes = [
       deshabilitado: false
     },
     {
-      ID_ficha: 5,
       ID_Paciente: 5,
       ID_Medico: 5,
       alergias: "Mariscos",
@@ -237,35 +222,30 @@ const pacientes = [
   // Administrador
   const administradores = [
     {
-      ID_Administrador: 1,
       email: "admin1@mail.com",
       contraseña: "admin123",
       fecha_creacion: "2023-01-01",
       deshabilitado: false
     },
     {
-      ID_Administrador: 2,
       email: "admin2@mail.com",
       contraseña: "admin456",
       fecha_creacion: "2023-02-15",
       deshabilitado: false
     },
     {
-      ID_Administrador: 3,
       email: "admin3@mail.com",
       contraseña: "admin789",
       fecha_creacion: "2023-03-20",
       deshabilitado: false
     },
     {
-      ID_Administrador: 4,
       email: "admin4@mail.com",
       contraseña: "admin101",
       fecha_creacion: "2023-04-10",
       deshabilitado: false
     },
     {
-      ID_Administrador: 5,
       email: "admin5@mail.com",
       contraseña: "admin202",
       fecha_creacion: "2023-05-05",
@@ -310,35 +290,30 @@ const pacientes = [
   // Horario
   const horarios = [
     {
-      ID_Horario: 1,
       ID_Medico: 1,
       dia: "L",
       inicio: "08:00",
       fin: "12:00"
     },
     {
-      ID_Horario: 2,
       ID_Medico: 2,
       dia: "Ma",
       inicio: "09:00",
       fin: "13:00"
     },
     {
-      ID_Horario: 3,
       ID_Medico: 3,
       dia: "Mi",
       inicio: "10:00",
       fin: "14:00"
     },
     {
-      ID_Horario: 4,
       ID_Medico: 4,
       dia: "J",
       inicio: "08:00",
       fin: "12:00"
     },
     {
-      ID_Horario: 5,
       ID_Medico: 5,
       dia: "V",
       inicio: "09:00",

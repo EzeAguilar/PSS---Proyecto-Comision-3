@@ -1,10 +1,10 @@
 const { pacientes,
-    medicos,
-    citas,
-    fichas_medicas,
-    administradores,
-    es_paciente_de,
-    horarios } = require('./placeholder-data');
+  medicos,
+  citas,
+  fichas_medicas,
+  administradores,
+  es_paciente_de,
+  horarios } = require('./placeholder-data');
 
 const { db } = require('@vercel/postgres');
 const bcrypt = require('bcrypt');
@@ -12,7 +12,7 @@ require('dotenv').config();
 
 // Función para insertar datos en la tabla "Pacientes"
 async function seedPacientes(client) {
-  
+
   try {
     await client.sql`
       CREATE TABLE IF NOT EXISTS pacientes (
@@ -27,14 +27,14 @@ async function seedPacientes(client) {
         deshabilitado BOOLEAN
       );
     `;
-
+    // TODO: add dni to pacientes
     console.log(`Created "pacientes" table`);
 
     for (const paciente of pacientes) {
       const hashedPassword = await bcrypt.hash(paciente.contraseña, 10);
       await client.sql`
-        INSERT INTO pacientes (ID_Paciente, email, contraseña, nombre, apellido, domicilio, telefono, fecha_nac, deshabilitado)
-        VALUES (${paciente.ID_Paciente} ,${paciente.email}, ${hashedPassword}, ${paciente.nombre}, ${paciente.apellido}, ${paciente.domicilio}, ${paciente.telefono}, ${paciente.fecha_nac}, ${paciente.deshabilitado});
+        INSERT INTO pacientes (email, contraseña, nombre, apellido, domicilio, telefono, fecha_nac, deshabilitado)
+        VALUES (${paciente.email}, ${hashedPassword}, ${paciente.nombre}, ${paciente.apellido}, ${paciente.domicilio}, ${paciente.telefono}, ${paciente.fecha_nac}, ${paciente.deshabilitado});
       `;
     }
 
@@ -73,8 +73,8 @@ async function seedMedicos(client) {
     for (const medico of medicos) {
       const hashedPassword = await bcrypt.hash(medico.contraseña, 10);
       await client.sql`
-        INSERT INTO medicos (ID_Medico, email, contraseña, numero_matricula, nombre, apellido, dni, domicilio, fecha_nac, especialidad, telefono, tiempo_consulta, deshabilitado)
-        VALUES (${medico.ID_Medico}, ${medico.email}, ${hashedPassword}, ${medico.numero_matricula}, ${medico.nombre}, ${medico.apellido}, ${medico.dni}, ${medico.domicilio}, ${medico.fecha_nac}, ${medico.especialidad}, ${medico.telefono}, ${medico.tiempo_consulta}, ${medico.deshabilitado});
+        INSERT INTO medicos (email, contraseña, numero_matricula, nombre, apellido, dni, domicilio, fecha_nac, especialidad, telefono, tiempo_consulta, deshabilitado)
+        VALUES (${medico.email}, ${hashedPassword}, ${medico.numero_matricula}, ${medico.nombre}, ${medico.apellido}, ${medico.dni}, ${medico.domicilio}, ${medico.fecha_nac}, ${medico.especialidad}, ${medico.telefono}, ${medico.tiempo_consulta}, ${medico.deshabilitado});
       `;
     }
 
@@ -179,8 +179,8 @@ async function seedFichaMedica(client) {
 
     for (const ficha of fichas_medicas) {
       await client.sql`
-        INSERT INTO ficha_medica (ID_ficha, ID_Paciente, ID_Medico, alergias, diagnosticos, tratamientos, ultima_modificacion, medicamentos, deshabilitado)
-        VALUES (${ficha.ID_ficha}, ${ficha.ID_Paciente}, ${ficha.ID_Medico}, ${ficha.alergias}, ${ficha.diagnosticos}, ${ficha.tratamientos}, ${ficha.ultima_modificacion}, ${ficha.medicamentos}, ${ficha.deshabilitado});
+        INSERT INTO ficha_medica (ID_Paciente, ID_Medico, alergias, diagnosticos, tratamientos, ultima_modificacion, medicamentos, deshabilitado)
+        VALUES (${ficha.ID_Paciente}, ${ficha.ID_Medico}, ${ficha.alergias}, ${ficha.diagnosticos}, ${ficha.tratamientos}, ${ficha.ultima_modificacion}, ${ficha.medicamentos}, ${ficha.deshabilitado});
       `;
     }
 
@@ -211,8 +211,8 @@ async function seedHorarios(client) {
 
     for (const horario of horarios) {
       await client.sql`
-        INSERT INTO horarios (ID_Horario, ID_Medico, dia, inicio, fin)
-        VALUES (${horario.ID_Horario}, ${horario.ID_Medico}, ${horario.dia}, ${horario.inicio}, ${horario.fin});
+        INSERT INTO horarios (ID_Medico, dia, inicio, fin)
+        VALUES (${horario.ID_Medico}, ${horario.dia}, ${horario.inicio}, ${horario.fin});
       `;
     }
 
@@ -243,8 +243,8 @@ async function seedAdministradores(client) {
     for (const admin of administradores) {
       const hashedPassword = await bcrypt.hash(admin.contraseña, 10);
       await client.sql`
-        INSERT INTO administradores (ID_Administrador, email, contraseña, fecha_creacion, deshabilitado)
-        VALUES (${admin.ID_Administrador}, ${admin.email}, ${hashedPassword}, ${admin.fecha_creacion}, ${admin.deshabilitado});
+        INSERT INTO administradores (email, contraseña, fecha_creacion, deshabilitado)
+        VALUES (${admin.email}, ${hashedPassword}, ${admin.fecha_creacion}, ${admin.deshabilitado});
       `;
     }
 
