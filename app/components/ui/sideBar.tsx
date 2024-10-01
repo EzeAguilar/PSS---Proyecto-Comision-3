@@ -12,13 +12,13 @@ const Sidebar = () => {
   const handleNavigation = (path: string) => {
     setActivePath(path);
     if (path === PATH_OPTIONS.patients) {
-      router.push(PATH_OPTIONS.patients);
+      router.push(`${PATH_OPTIONS.patients}`);
     }
     else if (path === PATH_OPTIONS.doctors) {
-      router.push(PATH_OPTIONS.doctors);
+      router.push(`${PATH_OPTIONS.doctors}`);
     }
     else if (path === PATH_OPTIONS.calendar) {
-      router.push(PATH_OPTIONS.calendar);
+      router.push(`${PATH_OPTIONS.calendar}`);
     }
   }
 

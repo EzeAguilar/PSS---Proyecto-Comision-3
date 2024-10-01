@@ -2,7 +2,7 @@
 import { sql } from "@vercel/postgres";
 import { Patient } from "./utils";
 import { Doctor } from "./utils";
-import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation';
 import { unstable_noStore as noStore } from 'next/cache';
 
 export async function fetchPatient(id: number): Promise<Patient> {
@@ -56,7 +56,7 @@ export async function editDoctor(doctor: Doctor): Promise<void> {
     await sql`
     UPDATE medicos
     SET email = ${doctor.email}, contraseña = ${doctor.contraseña}, numero_matricula = ${doctor.numero_matricula}, nombre = ${doctor.nombre}, apellido = ${doctor.apellido}, dni = ${doctor.dni}, domicilio = ${doctor.domicilio}, fecha_nac = ${doctor.fecha_nac}, especialidad = ${doctor.especialidad}, telefono = ${doctor.telefono}, tiempo_consulta = ${doctor.tiempo_consulta}, deshabilitado = ${doctor.deshabilitado}
-    WHERE ID_Medico = ${doctor.ID_Medico}
+    WHERE ID_Medico = ${doctor.id_medico}
     `;
     //CHEQUEAR, LO HIZO COPILOT
 }
@@ -105,7 +105,7 @@ export async function deleteDoctor(id: number | undefined): Promise<void> {
         throw error;
     }
 
-    revalidatePath('/admin/doctors');
+    redirect('/admin/doctors');
 }
 
 
@@ -126,7 +126,7 @@ export async function searchDoctors(query: string): Promise<Doctor[]> {
   }
 
   export async function fetchAllDoctors(): Promise<Doctor[]> {
-    
+    noStore();
     const result = await sql<Doctor>`
     SELECT * FROM medicos
     `;
