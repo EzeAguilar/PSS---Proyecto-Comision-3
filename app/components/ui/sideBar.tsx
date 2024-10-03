@@ -23,14 +23,16 @@ const Sidebar = () => {
   }
 
   const getButtonClassName = (path: string) => {
-    // Si el path está activo, aplica negrita, si no, aplica el estilo estándar
-    return activePath === path ? "text-black font-semibold" : "text-gray-700 hover:text-black";
+    return activePath === path
+        ? "relative text-black font-semibold text-[1.8rem] hover:no-underline pb-2 before:block before:absolute before:-bottom-1 before:left-[15%] before:h-[3px] before:w-[75%] before:bg-black"
+        : "text-black hover:no-underline text-[1.8rem]"; // No pseudo-element `before` here
   };
+
 
   return (
     <aside className="bg-gray-100 h-screen p-4 w-64 fixed border border-solid border-black">
       <nav>
-        <ul>
+        <ul className="items-center justify-center mr-8 mt-9">
           <li className="mb-4">
             <Button
               size="lg"

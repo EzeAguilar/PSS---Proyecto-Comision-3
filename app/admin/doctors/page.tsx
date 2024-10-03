@@ -1,10 +1,11 @@
 'use client'
 
 import { Button } from "@/app/components/ui/button";
-import { searchDoctors, deleteDoctor, fetchAllDoctors } from "@/app/lib/data";
+import {searchDoctors, deleteDoctor, fetchAllDoctors} from "@/app/lib/data";
 import { Doctor, PATH_OPTIONS } from "@/app/lib/utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import {FaEdit, FaTrash} from "react-icons/fa";
 
 const DoctorsPage = () => {
   const router = useRouter();
@@ -52,71 +53,67 @@ const DoctorsPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      {/* Encabezado con barra de búsqueda y botón */}
-      <div className="flex justify-between items-center gap-10">
-        <h1 className="text-xl font-semibold">Médicos</h1>
+      <div className="p-4">
+        <div className="flex items-center mb-4">
+          <h1 className="text-3xl mr-44">Medicos</h1>
 
-        {/* Barra de búsqueda */}
-        <div className="flex items-center w-1/2">
-          <input
-            type="text"
-            placeholder="Buscar médico..."
-            className="border p-2 rounded-md w-full"
-            onChange={(e) => handleSearch(e.target.value)} // Función para manejar búsqueda
-          />
+          {/* Barra de búsqueda */}
+          <div className="flex items-center w-1/2 mr-36">
+            <input
+                type="text"
+                placeholder="Buscar médico..."
+                className="border border-gray-300 rounded-lg p-2 flex-grow focus:outline-none focus:border-blue-500"
+                onChange={(e) => handleSearch(e.target.value)} // Función para manejar búsqueda
+            />
+          </div>
+
+          {/* Botón agregar */}
+          <Button
+              size="lg"
+              variant="default"
+              className="bg-red-500 text-white text-[1.3rem] px-10 h-12 flex items-center rounded-lg" // Botón más ovalado
+              onClick={() => handleNavigation(PATH_OPTIONS.newDoctor)}
+          >
+            Agregar
+          </Button>
         </div>
 
-        {/* Botón agregar */}
-        <Button
-          size="lg"
-          variant="default"
-          className="bg-green-500 text-white px-4 py-2 rounded-md"
-          onClick={() => handleNavigation(PATH_OPTIONS.newDoctor)}
-        >
-          Agregar
-        </Button>
-      </div>
-
-      {/* Tabla de médicos */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full table-auto border-collapse">
-          <thead>
+        {/* Tabla de médicos */}
+        <div className="overflow-x-auto">
+          <table className="min-w-full table-auto border-collapse">
+            <thead>
             <tr>
               <th className="px-4 py-2 border">Nombre</th>
               <th className="px-4 py-2 border">Apellido</th>
               <th className="px-4 py-2 border">DNI</th>
               <th className="px-4 py-2 border">Domicilio</th>
               <th className="px-4 py-2 border">Teléfono</th>
-              <th className="px-4 py-2 border">Editar</th>
-              <th className="px-4 py-2 border">Eliminar</th>
             </tr>
-          </thead>
-          <tbody>
+            </thead>
+            <tbody>
             {filteredDoctors.map((medico) => (
-              <tr key={medico.id_medico}>
-                <td className="px-4 py-2 border">{medico.nombre}</td>
-                <td className="px-4 py-2 border">{medico.apellido}</td>
-                <td className="px-4 py-2 border">{medico.dni}</td>
-                <td className="px-4 py-2 border">{medico.domicilio}</td>
-                <td className="px-4 py-2 border">{medico.telefono}</td>
-                <td className="px-4 py-2 border text-center">
-                  <Button  
-                  className="bg-blue-600 text-white px-12 py-2 rounded-md"
-                  onClick={() => editDoctor(medico.id_medico)}>Editar</Button>
-                </td>
-                <td className="px-4 py-2 border text-center">
-                  <Button 
-                   className="bg-red-600 text-white px-12 py-2 rounded-md"
-                  
-                  onClick={() => handleDeleteDoctor(medico.id_medico)}>Eliminar</Button>
-                </td>
-              </tr>
+                <tr key={medico.id_medico}>
+                  <td className="px-4 py-2 border">{medico.nombre}</td>
+                  <td className="px-4 py-2 border">{medico.apellido}</td>
+                  <td className="px-4 py-2 border">{medico.dni}</td>
+                  <td className="px-4 py-2 border">{medico.domicilio}</td>
+                  <td className="px-4 py-2 border">{medico.telefono}</td>
+                  <td className="px-4 py-2 flex space-x-4">
+                    <FaEdit
+                        className="text-black cursor-pointer"
+                        onClick={() => editDoctor(medico.id_medico)}
+                    />
+                    <FaTrash
+                        className="text-black cursor-pointer"
+                        onClick={() => handleDeleteDoctor(medico.id_medico)}
+                    />
+                  </td>
+                </tr>
             ))}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
   );
 }
 

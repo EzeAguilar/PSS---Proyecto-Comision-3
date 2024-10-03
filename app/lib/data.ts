@@ -44,6 +44,48 @@ export async function updatePatient(patient: Patient): Promise<void> {
     `;
 }
 
+export async function deletePatient(id: number | undefined): Promise<void> {
+    if (id === undefined) {
+        console.error("ID is undefined, cannot delete patient");
+        return;
+    }
+
+    try {
+        await sql`
+        DELETE FROM ficha_medica
+        WHERE ID_Paciente = ${id};
+        `;
+
+        await sql`
+        DELETE FROM citas
+        WHERE ID_Paciente = ${id};
+        `;
+
+        await sql`
+        DELETE FROM es_paciente_de
+        WHERE ID_Paciente = ${id};
+        `;
+
+        await sql`
+        DELETE FROM pacientes
+        WHERE ID_Paciente = ${id};
+        `;
+
+        console.log(`Patient with ID ${id} deleted successfully.`);
+    } catch (error) {
+        console.error(`Error deleting patient with ID ${id}:`, error);
+        throw error;
+    }
+}
+
+export async function fetchAllPatients(): Promise<Patient[]> {
+    noStore();
+    const result = await sql<Patient>`
+    SELECT * FROM pacientes
+    `;
+    return result.rows;
+}
+
 export async function insertDoctor(doctor: Doctor): Promise<void> {
     await sql`
     INSERT INTO medicos (email, contraseña, numero_matricula, nombre, apellido, dni, domicilio, fecha_nac, especialidad, telefono, tiempo_consulta, deshabilitado)

@@ -46,10 +46,10 @@ export default function Component() {
           Registrarse como paciente
         </Link>
 
-        <div className="fixed bottom-4 right-4">
+        <div className="fixed bottom-4 right-4 mb-9">
           <Image src="/file.png" alt="Description" width={170} height={170} />
         </div>
-        <div className="text-white text-l text-left pl-4 fixed bottom-0 left-0 right-0 bg-black w-full py-2">
+        <div className="text-white text-l text-left pl-4 pr-4 fixed bottom-0 left-0 right-0 bg-black w-full py-4">
           Usuario: Admin / Paciente / Médico
         </div>
       </div>
