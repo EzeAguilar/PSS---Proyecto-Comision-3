@@ -17,7 +17,7 @@ const EditPatientClientPage = ({ patientData }: EditPatientClientPageProps) => {
     const router = useRouter();
 
     const [formData, setFormData] = useState<Patient>({
-        ID_Paciente: patientData.ID_Paciente ,
+        id_paciente: patientData.id_paciente ,
         dni: patientData.dni,
         nombre: patientData.nombre,
         apellido: patientData.apellido,
@@ -62,6 +62,17 @@ const EditPatientClientPage = ({ patientData }: EditPatientClientPageProps) => {
         updatePatient(formData);
     };
 
+    const handleSaveClick = async () => {
+        try {
+            console.log("Guardando paciente...", formData);
+            await updatePatient(formData);
+            console.log("Paciente actualizado correctamente");
+            router.push('/admin/');
+        } catch (error) {
+            console.error("Error al actualizar el paciente:", error);
+        }
+    };
+
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-10">
             <h1>Edit Patient (Client Component)</h1>
@@ -70,13 +81,14 @@ const EditPatientClientPage = ({ patientData }: EditPatientClientPageProps) => {
                 <Button
                     type="submit"
                     className="bg-red-600 text-white px-4 py-2 rounded-md"
+                    onClick={handleSaveClick}
                 >
                     Guardar
                 </Button>
                 <Button
                     variant="destructive"
                     className="bg-gray-700 text-white px-4 py-2 rounded-md"
-                    onClick={() => router.push('/admin/patients')}
+                    onClick={() => router.push('/admin/')}
                 >
                     Cancelar
                 </Button>

@@ -13,18 +13,18 @@ const PatientsPage = () => {
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
 
   useEffect(() => {
-    const loadDoctors = async () => {
+    const loadPatients = async () => {
       const allPatients = await fetchAllPatients();
       console.log("Datos de todos los pacientes:", allPatients); // Imprime todos los datos de los doctores
       setFilteredPatients(allPatients);
       console.log(allPatients[0].apellido);
     };
-    loadDoctors();
+    loadPatients();
   }, []);
 
   const editPatient = (patient: Patient) => {
-    const patientId = patient.ID_Paciente ?? 0; // Usa 0 u otro valor predeterminado si id es undefined
-    handleNavigation(`${PATH_OPTIONS.newPatient}/${patientId}`);//TODO cambiar a editPatient
+    const patientId = patient.id_paciente ?? 0; // Usa 0 u otro valor predeterminado si id es undefined
+    handleNavigation(`${PATH_OPTIONS.editPatient}/${patientId}`);
   }
 
   const handleNavigation = (path: string) => {
@@ -85,7 +85,7 @@ const PatientsPage = () => {
             </thead>
             <tbody>
             {filteredPatients.map((patient) => (
-                <tr key={patient.ID_Paciente}>
+                <tr key={patient.id_paciente}>
                   <td className="px-4 py-2 border">{patient.nombre}</td>
                   <td className="px-4 py-2 border">{patient.apellido}</td>
                   <td className="px-4 py-2 border">{patient.dni}</td>
@@ -99,7 +99,7 @@ const PatientsPage = () => {
                     />
                     <FaTrash
                         className="text-black cursor-pointer"
-                        onClick={() => deletePatient(patient.ID_Paciente)}
+                        onClick={() => deletePatient(patient.id_paciente)}
                     />
                   </td>
                 </tr>

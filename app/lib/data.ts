@@ -14,7 +14,7 @@ export async function fetchPatient(id: number): Promise<Patient> {
         const date = new Date(row.fecha_nac);
         const formattedDate = date.toLocaleDateString('en-GB'); 
         return {
-            ID_Paciente: id,
+            id_paciente: row.id_paciente,
             dni: 4000,
             nombre: row.nombre,
             apellido: row.apellido,
@@ -40,7 +40,7 @@ export async function updatePatient(patient: Patient): Promise<void> {
     await sql`
     UPDATE pacientes
     SET nombre = ${patient.nombre}, apellido = ${patient.apellido}, fecha_nac = ${patient.fecha_nac}, domicilio = ${patient.domicilio}, telefono = ${patient.telefono}, email = ${patient.email}, deshabilitado = ${patient.deshabilitado}, contraseña =  ${patient.contraseña} 
-    WHERE ID_Paciente = ${patient.ID_Paciente}
+    WHERE ID_Paciente = ${patient.id_paciente}
     `;
 }
 

@@ -11,7 +11,7 @@ type FormFieldValue = string | number;
 
 const NewPatientPage = () => {
     const [form, setForm] = useState<Patient>({
-        ID_Paciente: 1000,
+        id_paciente: undefined,
         dni: undefined,
         nombre: "",
         apellido: "",
@@ -20,7 +20,7 @@ const NewPatientPage = () => {
         fecha_nac: "",
         email: "",
         contraseña: "",
-        deshabilitado: true,
+        deshabilitado: true
     });
 
     const handleInputChange = (field: keyof Patient, value: FormFieldValue) => {
@@ -70,7 +70,7 @@ const NewPatientPage = () => {
                 <Button
                     variant="destructive"
                     className="bg-gray-700 text-white px-4 py-2 rounded-md"
-                    onClick={() => router.push('/admin/patients')}
+                    onClick={() => router.push('/admin')}
                 >
                     Cancelar
                 </Button>
