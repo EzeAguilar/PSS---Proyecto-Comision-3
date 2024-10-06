@@ -4,6 +4,38 @@ import { Patient } from "./utils";
 import { Doctor } from "./utils";
 import { unstable_noStore as noStore } from 'next/cache';
 
+
+
+
+export async function fetchMedico(id: number): Promise<Doctor> {
+    noStore();
+    const result = await sql<Doctor>`
+      SELECT * FROM medicos WHERE ID_Medico = ${id}
+    `;
+  
+    const medico = result.rows.map((row) => {
+      const date = new Date(row.fecha_nac);
+      const formattedDate = date.toLocaleDateString('en-GB');
+      return {
+        id_medico: row.id_medico,
+        email: row.email,
+        contraseña: row.contraseña,
+        numero_matricula: row.numero_matricula,
+        nombre: row.nombre,
+        apellido: row.apellido,
+        dni: row.dni,
+        domicilio: row.domicilio,
+        fecha_nac: formattedDate,
+        especialidad: row.especialidad,
+        telefono: row.telefono,
+        tiempo_consulta: row.tiempo_consulta,
+        deshabilitado: row.deshabilitado,
+      };
+    });
+  
+    return medico[0]; // Asumiendo que solo habrá un médico con el ID dado
+  }
+
 export async function fetchPatient(id: number): Promise<Patient> {
     noStore();
     const result = await sql<Patient>`
@@ -105,44 +137,21 @@ export async function editDoctor(doctor: Doctor): Promise<void> {
 export async function deleteDoctor(id: number | undefined): Promise<void> {
     
     if (id === undefined) {
-        console.error("ID is undefined, cannot delete doctor");
+        console.error("ID is undefined, cannot disable doctor");
         return;
     }
-
+    
     try {
-
+        // Establecer el campo deshabilitado en true para el médico
         await sql`
-        DELETE FROM ficha_medica
+        UPDATE medicos
+        SET deshabilitado = true
         WHERE ID_Medico = ${id};
         `;
-
-        // Eliminar las citas del médico
-        await sql`
-        DELETE FROM citas
-        WHERE ID_Medico = ${id};
-        `;
-
-        // Eliminar los horarios del médico
-        await sql`
-        DELETE FROM horarios
-        WHERE ID_Medico = ${id};
-        `;
-
-        // Eliminar las relaciones en "es_paciente_de"
-        await sql`
-        DELETE FROM es_paciente_de
-        WHERE ID_Medico = ${id};
-        `;
-
-        // Finalmente, eliminar el médico
-        await sql`
-        DELETE FROM medicos
-        WHERE ID_Medico = ${id};
-        `;
-
-        console.log(`Doctor with ID ${id} deleted successfully.`);
+    
+        console.log(`Doctor with ID ${id} disabled successfully.`);
     } catch (error) {
-        console.error(`Error deleting doctor with ID ${id}:`, error);
+        console.error(`Error disabling doctor with ID ${id}:`, error);
         throw error;
     }
 }

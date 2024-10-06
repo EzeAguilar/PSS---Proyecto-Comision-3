@@ -2,34 +2,42 @@
 
 import { useState, FormEvent } from "react";
 import { Button } from "@/app/components/ui/button";
-import NewPatientForm from "@/app/components/ui/newPatientForm";
-import { Patient } from "@/app/lib/utils";
+import NewDoctorForm from "@/app/components/ui/newDoctorForm";
+import { Doctor } from "@/app/lib/utils";
 import { useRouter } from "next/navigation";
-import { updatePatient } from "@/app/lib/data";
+import { editDoctor } from "@/app/lib/data";
 
 type FormFieldValue = string | number;
 
-interface EditPatientClientPageProps {
-    patientData: Patient;
+interface EditDoctorClientPageProps {
+    medicoData: Doctor;
 }
 
-const EditPatientClientPage = ({ patientData }: EditPatientClientPageProps) => {
+const EditDoctorClientPage = ({ medicoData }: EditDoctorClientPageProps) => {
     const router = useRouter();
 
-    const [formData, setFormData] = useState<Patient>({
-        id_paciente: patientData.id_paciente ,
-        dni: patientData.dni,
-        nombre: patientData.nombre,
-        apellido: patientData.apellido,
-        telefono: patientData.telefono,
-        domicilio: patientData.domicilio,
-        fecha_nac: patientData.fecha_nac,
-        email: patientData.email,
-        contraseña: patientData.contraseña,
-        deshabilitado: false,
+    const formatDateToDisplay = (dateString: string) => {
+        const dateParts = dateString.split('-');
+        if (dateParts.length === 3) {
+            return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`; // Formato DD/MM/YYYY
+        }
+        return dateString;
+    };
+
+    const formatDateToDatabase = (dateString: string) => {
+        const dateParts = dateString.split('/');
+        if (dateParts.length === 3) {
+            return `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`; // Formato YYYY-MM-DD
+        }
+        return dateString;
+    };
+
+    const [formData, setFormData] = useState<Doctor>({
+        ...medicoData,
+        fecha_nac: formatDateToDisplay(medicoData.fecha_nac), // Formatear la fecha para mostrarla
     });
 
-    const handleInputChange = (field: keyof Patient, value: FormFieldValue) => {
+    const handleInputChange = (field: keyof Doctor, value: FormFieldValue) => {
         setFormData((prevForm) => ({
             ...prevForm,
             [field]: value,
@@ -59,15 +67,24 @@ const EditPatientClientPage = ({ patientData }: EditPatientClientPageProps) => {
             console.log("Formulario no es válido");
         }
 
-        updatePatient(formData);
+        const formattedFormData = {
+            ...formData,
+            fecha_nac: formatDateToDatabase(formData.fecha_nac), // Formatear la fecha para la base de datos
+        };
+
+        editDoctor(formattedFormData);
     };
 
     const handleSaveClick = async () => {
         try {
             console.log("Guardando paciente...", formData);
-            await updatePatient(formData);
+            const formattedFormData = {
+                ...formData,
+                fecha_nac: formatDateToDatabase(formData.fecha_nac), // Formatear la fecha para la base de datos
+            };
+            await editDoctor(formattedFormData);
             console.log("Paciente actualizado correctamente");
-            router.push('/admin/');
+            router.push('/admin/doctors');
         } catch (error) {
             console.error("Error al actualizar el paciente:", error);
         }
@@ -75,8 +92,8 @@ const EditPatientClientPage = ({ patientData }: EditPatientClientPageProps) => {
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-10">
-            <h1>Editar Paciente</h1>
-            <NewPatientForm formData={formData} handleInputChange={handleInputChange} />
+            <h1>Edit Patient (Client Component)</h1>
+            <NewDoctorForm formData={formData} handleInputChange={handleInputChange} />
             <div className="flex justify-center items-center gap-3">
                 <Button
                     type="submit"
@@ -88,7 +105,7 @@ const EditPatientClientPage = ({ patientData }: EditPatientClientPageProps) => {
                 <Button
                     variant="destructive"
                     className="bg-gray-700 text-white px-4 py-2 rounded-md"
-                    onClick={() => router.push('/admin/')}
+                    onClick={() => router.push('/admin/doctors')}
                 >
                     Cancelar
                 </Button>
@@ -97,4 +114,4 @@ const EditPatientClientPage = ({ patientData }: EditPatientClientPageProps) => {
     );
 };
 
-export default EditPatientClientPage;
+export default EditDoctorClientPage;
