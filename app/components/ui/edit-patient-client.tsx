@@ -76,7 +76,7 @@ const EditPatientClientPage = ({ patientData }: EditPatientClientPageProps) => {
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-10">
             <h1>Editar Paciente</h1>
-            <NewPatientForm formData={formData} handleInputChange={handleInputChange} />
+            <NewPatientForm formData={formData} handleInputChange={handleInputChange} insercion={false}/>
             <div className="flex justify-center items-center gap-3">
                 <Button
                     type="submit"

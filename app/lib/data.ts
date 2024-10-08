@@ -47,7 +47,7 @@ export async function fetchPatient(id: number): Promise<Patient> {
         const formattedDate = date.toLocaleDateString('en-GB'); 
         return {
             id_paciente: row.id_paciente,
-            dni: 4000,
+            dni: row.dni,
             nombre: row.nombre,
             apellido: row.apellido,
             fecha_nac: formattedDate,
@@ -63,8 +63,8 @@ export async function fetchPatient(id: number): Promise<Patient> {
 
 export async function insertPatient(patient: Patient): Promise<void> {
     await sql`
-    INSERT INTO pacientes (nombre, apellido, fecha_nac, domicilio, telefono, email, deshabilitado, contraseña)
-    VALUES (${patient.nombre}, ${patient.apellido}, ${patient.fecha_nac}, ${patient.domicilio}, ${patient.telefono}, ${patient.email}, ${patient.deshabilitado}, ${patient.contraseña})
+    INSERT INTO pacientes (nombre, apellido, fecha_nac, domicilio, telefono, email, deshabilitado, contraseña, dni)
+    VALUES (${patient.nombre}, ${patient.apellido}, ${patient.fecha_nac}, ${patient.domicilio}, ${patient.telefono}, ${patient.email}, ${patient.deshabilitado}, ${patient.contraseña}, ${patient.dni})
     `;
 }
 

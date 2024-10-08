@@ -5,9 +5,10 @@ interface NewPatientFormProps {
     formData: Patient;
     handleInputChange: (field: keyof Patient, value: string | number) => void;
     patientID?: string;
+    insercion: boolean;
 }
 
-const NewPatientForm: React.FC<NewPatientFormProps> = ({ formData, handleInputChange, /*patientID = ""*/ }) => {
+const NewPatientForm: React.FC<NewPatientFormProps> = ({ formData, handleInputChange, insercion /*patientID = ""*/ }) => {
 
     //if (patientID !== "") {
       //  const patient = fetchPatient(patientID); COMENTADO PARA QUE ANDE DEPLOY
@@ -71,14 +72,16 @@ const NewPatientForm: React.FC<NewPatientFormProps> = ({ formData, handleInputCh
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
             />
-            <CustomInput
-                type="password"
-                label="Contraseña"
-                placeholder="********"
-                required
-                value={formData.contraseña}
-                onChange={(e) => handleInputChange('contraseña', e.target.value)}
-            />
+            {insercion && 
+                (<CustomInput
+                    type="password"
+                    label="Contraseña"
+                    placeholder="********"
+                    required
+                    value={formData.contraseña}
+                    onChange={(e) => handleInputChange('contraseña', e.target.value)}
+                />
+            )}
         </div>
     );
 };

@@ -23,7 +23,7 @@ const NewDoctorPage = () => {
         especialidad: "",
         telefono: undefined,
         tiempo_consulta: undefined,
-        deshabilitado: true,
+        deshabilitado: false,
     });
 
     const handleInputChange = (field: keyof Doctor, value: FormFieldValue) => {
@@ -47,7 +47,8 @@ const NewDoctorPage = () => {
             console.log("Por favor, complete todos los campos.");
             return;
         }
-    
+        console.log("Datos form antes del check", form);
+        
         if (e.currentTarget.checkValidity()) {
             console.log("Datos del formulario:", form);
         } else {
@@ -62,7 +63,7 @@ const NewDoctorPage = () => {
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-10">
             <h1 className="text-xl">Registrar nuevo doctor</h1>
-            <NewDoctorForm formData={form} handleInputChange={handleInputChange} />
+            <NewDoctorForm formData={form} handleInputChange={handleInputChange} insercion={true}/>
             <div className="flex justify-center items-center gap-3">
                 <Button
                     type="submit"

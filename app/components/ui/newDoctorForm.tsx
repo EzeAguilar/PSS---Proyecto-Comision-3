@@ -5,9 +5,10 @@ interface NewDoctorFormProps {
     formData: Doctor;
     handleInputChange: (field: keyof Doctor, value: string | number) => void;
     doctorID?: string;
+    insercion: boolean;
 }
 
-const NewDoctorForm: React.FC<NewDoctorFormProps> = ({ formData, handleInputChange}) => {
+const NewDoctorForm: React.FC<NewDoctorFormProps> = ({ formData, handleInputChange, insercion}) => {
     return (
         <div className="bg-gray-200 md:min-h-[450px] rounded-lg flex flex-wrap justify-between p-14">
             <CustomInput
@@ -90,6 +91,16 @@ const NewDoctorForm: React.FC<NewDoctorFormProps> = ({ formData, handleInputChan
                 value={formData.tiempo_consulta}
                 onChange={(e) => handleInputChange('tiempo_consulta', e.target.value)}
             />
+            {insercion && (
+                <CustomInput
+                    type="password"
+                    label="Contraseña"
+                    placeholder="********"
+                    required
+                    value={formData.contraseña}
+                    onChange={(e) => handleInputChange('contraseña', e.target.value)}
+                />
+            )}
         </div>
     );
 };
