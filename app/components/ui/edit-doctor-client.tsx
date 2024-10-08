@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { Button } from "@/app/components/ui/button";
 import NewDoctorForm from "@/app/components/ui/newDoctorForm";
 import { Doctor } from "@/app/lib/utils";
@@ -36,6 +36,10 @@ const EditDoctorClientPage = ({ medicoData }: EditDoctorClientPageProps) => {
         ...medicoData,
         fecha_nac: formatDateToDisplay(medicoData.fecha_nac), // Formatear la fecha para mostrarla
     });
+
+    useEffect (() => {
+        console.log(medicoData.fecha_nac);
+    }, []);
 
     const handleInputChange = (field: keyof Doctor, value: FormFieldValue) => {
         setFormData((prevForm) => ({
@@ -92,7 +96,7 @@ const EditDoctorClientPage = ({ medicoData }: EditDoctorClientPageProps) => {
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-10">
-            <h1>Edit Patient (Client Component)</h1>
+            <h1>Edit Doctor</h1>
             <NewDoctorForm formData={formData} handleInputChange={handleInputChange} />
             <div className="flex justify-center items-center gap-3">
                 <Button

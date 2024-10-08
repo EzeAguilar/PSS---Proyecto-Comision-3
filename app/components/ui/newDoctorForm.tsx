@@ -67,14 +67,6 @@ const NewDoctorForm: React.FC<NewDoctorFormProps> = ({ formData, handleInputChan
                 onChange={(e) => handleInputChange('email', e.target.value)}
             />
             <CustomInput
-                type="password"
-                label="Contraseña"
-                placeholder="********"
-                required
-                value={formData.contraseña}
-                onChange={(e) => handleInputChange('contraseña', e.target.value)}
-            />
-            <CustomInput
                 type="number"
                 label="Número de Matrícula"
                 placeholder="123456"
