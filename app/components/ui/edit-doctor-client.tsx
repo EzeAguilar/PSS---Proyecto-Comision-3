@@ -39,7 +39,7 @@ const EditDoctorClientPage = ({ medicoData }: EditDoctorClientPageProps) => {
 
     useEffect (() => {
         console.log(medicoData.fecha_nac);
-    }, []);
+    }, [medicoData.fecha_nac]);
 
     const handleInputChange = (field: keyof Doctor, value: FormFieldValue) => {
         setFormData((prevForm) => ({
