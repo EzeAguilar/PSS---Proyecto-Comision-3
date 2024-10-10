@@ -40,3 +40,20 @@ export type Doctor = {
   tiempo_consulta: number | undefined;
   deshabilitado: boolean;
 };
+
+export type Horario = {
+  dia: string;
+  inicio: string;
+  fin: string;
+  activo: boolean;
+};
+
+export const diasSemana = [
+  { dia: 'L', nombre: 'Lunes' },
+  { dia: 'Ma', nombre: 'Martes' },
+  { dia: 'Mi', nombre: 'Miércoles' },
+  { dia: 'J', nombre: 'Jueves' },
+  { dia: 'V', nombre: 'Viernes' },
+  { dia: 'S', nombre: 'Sábado' },
+  { dia: 'D', nombre: 'Domingo' },
+];

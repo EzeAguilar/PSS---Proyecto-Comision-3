@@ -4,8 +4,9 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import NewDoctorForm from "@/app/components/ui/newDoctorForm";
 import { Button } from "@/app/components/ui/button";
-import { Doctor } from "@/app/lib/utils";
+import { Doctor, Horario } from "@/app/lib/utils";
 import { insertDoctor } from "@/app/lib/data";
+import HorarioForm from "@/app/components/ui/horariosForm";
 
 type FormFieldValue = string | number;
 
@@ -25,6 +26,9 @@ const NewDoctorPage = () => {
         tiempo_consulta: undefined,
         deshabilitado: false,
     });
+
+    const [mostrarHorario, setMostrarHorario] = useState(false);
+    const [horarios, setHorarios] = useState<Horario[]>([]);
 
     const handleInputChange = (field: keyof Doctor, value: FormFieldValue) => {
         setForm((prevForm) => ({
@@ -51,37 +55,57 @@ const NewDoctorPage = () => {
         
         if (e.currentTarget.checkValidity()) {
             console.log("Datos del formulario:", form);
+            console.log("Horarios", horarios);
         } else {
             console.log("Formulario no es válido");
         }
 
-        insertDoctor(form);
+        insertDoctor(form, horarios);
     };
 
     const router = useRouter();
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-10">
-            <h1 className="text-xl">Registrar nuevo doctor</h1>
-            <NewDoctorForm formData={form} handleInputChange={handleInputChange} insercion={true}/>
-            <div className="flex justify-center items-center gap-3">
+        <>
+          {!mostrarHorario ? (
+            <form onSubmit={handleSubmit} className="flex flex-col gap-10">
+              <h1 className="text-xl">Registrar nuevo doctor</h1>
+              <NewDoctorForm formData={form} handleInputChange={handleInputChange} insercion={true} />
+              <div className="flex justify-center items-center gap-3">
                 <Button
-                    type="submit"
-                    className="bg-red-600 text-white px-4 py-2 rounded-md"
-                    onClick={() => router.push('/admin/doctors')}
+                  type="button"
+                  className="bg-black text-white px-4 py-2 rounded-md"
+                  onClick={() => setMostrarHorario(true)}
                 >
-                    Guardar
+                  Cargar horarios
                 </Button>
                 <Button
-                    variant="destructive"
-                    className="bg-gray-700 text-white px-4 py-2 rounded-md"
-                    onClick={() => router.push('/admin/doctors')}
+                  type="submit"
+                  className="bg-red-600 text-white px-4 py-2 rounded-md"
+                  onClick={() => router.push("/admin/doctors")}
                 >
-                    Cancelar
+                  Guardar
                 </Button>
-            </div>
-        </form>
-    );
+                <Button
+                  variant="destructive"
+                  className="bg-gray-700 text-white px-4 py-2 rounded-md"
+                  onClick={() => router.push("/admin/doctors")}
+                >
+                  Cancelar
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <HorarioForm
+              onConfirm={(horarios) => {
+                setHorarios(horarios);
+                setMostrarHorario(false);
+              }}
+              onCancel={() => setMostrarHorario(false)}
+            />
+          )}
+        </>
+      );
 };
 
 
