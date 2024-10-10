@@ -24,6 +24,7 @@ async function seedPacientes(client) {
         domicilio VARCHAR(255),
         telefono BIGINT,
         fecha_nac DATE,
+        dni INT NOT NULL UNIQUE,
         deshabilitado BOOLEAN
       );
     `;
@@ -33,8 +34,8 @@ async function seedPacientes(client) {
     for (const paciente of pacientes) {
       const hashedPassword = await bcrypt.hash(paciente.contraseña, 10);
       await client.sql`
-        INSERT INTO pacientes (email, contraseña, nombre, apellido, domicilio, telefono, fecha_nac, deshabilitado)
-        VALUES (${paciente.email}, ${hashedPassword}, ${paciente.nombre}, ${paciente.apellido}, ${paciente.domicilio}, ${paciente.telefono}, ${paciente.fecha_nac}, ${paciente.deshabilitado});
+        INSERT INTO pacientes (email, contraseña, nombre, apellido, domicilio, telefono, fecha_nac, dni, deshabilitado)
+        VALUES (${paciente.email}, ${hashedPassword}, ${paciente.nombre}, ${paciente.apellido}, ${paciente.domicilio}, ${paciente.telefono}, ${paciente.fecha_nac}, ${paciente.dni}, ${paciente.deshabilitado});
       `;
     }
 
@@ -203,6 +204,8 @@ async function seedHorarios(client) {
         dia VARCHAR(2) NOT NULL CHECK (dia IN ('L', 'Ma', 'Mi', 'J', 'V', 'S', 'D')),
         inicio TIME,
         fin TIME,
+        deshabilitado BOOLEAN,
+
         FOREIGN KEY (ID_Medico) REFERENCES medicos(ID_Medico)
       );
     `;
@@ -211,8 +214,8 @@ async function seedHorarios(client) {
 
     for (const horario of horarios) {
       await client.sql`
-        INSERT INTO horarios (ID_Medico, dia, inicio, fin)
-        VALUES (${horario.ID_Medico}, ${horario.dia}, ${horario.inicio}, ${horario.fin});
+        INSERT INTO horarios (ID_Medico, dia, inicio, fin, deshabilitado)
+        VALUES (${horario.ID_Medico}, ${horario.dia}, ${horario.inicio}, ${horario.fin}, ${horario.deshabilitado});
       `;
     }
 

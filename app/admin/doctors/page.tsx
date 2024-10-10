@@ -11,6 +11,8 @@ const DoctorsPage = () => {
   const router = useRouter();
   const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);
   const [showDisabled, setShowDisabled] = useState(false);
+  const [showConfirmMessage, setShowConfirmMessage] = useState(false);
+  const [selectedDoctorId, setSelectedDoctorId] = useState<number | null>(null);
 
   useEffect(() => {
     const loadDoctors = async () => {
@@ -43,12 +45,19 @@ const DoctorsPage = () => {
     handleNavigation(`${PATH_OPTIONS.editDoctor}/${doctorId}`);
   };
 
-  const handleDeleteDoctor = async (doctorId: number | undefined) => {
-    console.log("Deleting doctor with ID:", doctorId); // Verifica que el ID se está pasando correctamente
-    await deleteDoctor(doctorId);
-    const updatedDoctors = await fetchAllDoctors();
-    const filtered = updatedDoctors.filter(doctor => doctor.deshabilitado === showDisabled);
-    setFilteredDoctors(filtered);
+  const handleConfirm = (doctorId: number | undefined) => {
+    setSelectedDoctorId(doctorId ?? null); // Almacena el doctor a eliminar
+    setShowConfirmMessage(true); // Muestra el modal
+  };
+
+  const handleDeleteDoctor = async () => {
+    if (selectedDoctorId !== null) {
+      await deleteDoctor(selectedDoctorId);
+      const updatedDoctors = await fetchAllDoctors();
+      const filtered = updatedDoctors.filter(doctor => doctor.deshabilitado === showDisabled);
+      setFilteredDoctors(filtered);
+      setShowConfirmMessage(false); // Oculta el modal después de eliminar
+    }
   };
 
   return (
@@ -97,7 +106,7 @@ const DoctorsPage = () => {
               <th className="px-4 py-2 border">Domicilio</th>
               <th className="px-4 py-2 border">Teléfono</th>
               <th className="px-4 py-2 border">Deshabilitado</th>
-              <th className="px-4 py-2 border">Acciones</th>
+              {showDisabled === false && <th className="px-4 py-2 border">Acciones</th>}
             </tr>
           </thead>
           <tbody>
@@ -109,21 +118,47 @@ const DoctorsPage = () => {
                 <td className="px-4 py-2 border">{medico.domicilio}</td>
                 <td className="px-4 py-2 border">{medico.telefono}</td>
                 <td className="px-4 py-2 border">{medico.deshabilitado ? "Sí" : "No"}</td>
-                <td className="px-4 py-2 flex space-x-4">
-                  <FaEdit
-                    className="text-black cursor-pointer"
-                    onClick={() => editDoctor(medico.id_medico)}
-                  />
-                  <FaTrash
-                    className="text-black cursor-pointer"
-                    onClick={() => handleDeleteDoctor(medico.id_medico)}
-                  />
-                </td>
+                {showDisabled === false && (
+                    <td className="px-4 py-2 flex space-x-4">
+                      {/* Iconos de editar y eliminar al final de la fila */}
+                      <FaEdit
+                        className="text-black cursor-pointer"
+                        onClick={() => editDoctor(medico.id_medico)}
+                      />
+                      <FaTrash
+                        className="text-black cursor-pointer"
+                        onClick={() => handleConfirm(medico.id_medico)}
+                      />
+                    </td>
+                  )}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      {showConfirmMessage && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
+          <div className="bg-gray-100 p-6 rounded-lg">
+            <p className="text-lg mb-4">¿Seguro que desea eliminar al médico seleccionado?</p>
+            <div className="flex justify-end space-x-4">
+              <Button
+                variant="default"
+                className="bg-red-500 text-white px-4 py-2 rounded"
+                onClick={() => setShowConfirmMessage(false)} // Cierra el modal sin eliminar
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="default"
+                className="bg-black text-white px-4 py-2 rounded"
+                onClick={handleDeleteDoctor} // Confirma la eliminación
+              >
+                Confirmar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

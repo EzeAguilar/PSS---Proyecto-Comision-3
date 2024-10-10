@@ -1,56 +1,61 @@
 // Paciente
 const pacientes = [
-    {
-      email: "juan.perez@mail.com",
-      contraseña: "password123",
-      nombre: "Juan",
-      apellido: "Perez",
-      domicilio: "Calle Falsa 123",
-      telefono: 1234567890,
-      fecha_nac: "1990-04-12",
-      deshabilitado: false
-    },
-    {
-      email: "maria.gomez@mail.com",
-      contraseña: "mariaPass456",
-      nombre: "Maria",
-      apellido: "Gomez",
-      domicilio: "Avenida Siempre Viva 742",
-      telefono: 1234567891,
-      fecha_nac: "1988-08-22",
-      deshabilitado: false
-    },
-    {
-      email: "carlos.lopez@mail.com",
-      contraseña: "carlos789",
-      nombre: "Carlos",
-      apellido: "Lopez",
-      domicilio: "Calle Luna 333",
-      telefono: 1234567892,
-      fecha_nac: "1985-03-14",
-      deshabilitado: false
-    },
-    {
-      email: "ana.martinez@mail.com",
-      contraseña: "ana123",
-      nombre: "Ana",
-      apellido: "Martinez",
-      domicilio: "Calle Sol 456",
-      telefono: 1234567893,
-      fecha_nac: "1992-11-30",
-      deshabilitado: false
-    },
-    {
-      email: "luis.sanchez@mail.com",
-      contraseña: "luispass123",
-      nombre: "Luis",
-      apellido: "Sanchez",
-      domicilio: "Avenida Libertad 123",
-      telefono: 1234567894,
-      fecha_nac: "1995-05-10",
-      deshabilitado: false
-    }
-  ];
+  {
+    email: "juan.perez@mail.com",
+    contraseña: "password123",
+    nombre: "Juan",
+    apellido: "Perez",
+    domicilio: "Calle Falsa 123",
+    telefono: 1234567890,
+    fecha_nac: "1990-04-12",
+    dni: 12345678,
+    deshabilitado: false
+  },
+  {
+    email: "maria.gomez@mail.com",
+    contraseña: "mariaPass456",
+    nombre: "Maria",
+    apellido: "Gomez",
+    domicilio: "Avenida Siempre Viva 742",
+    telefono: 1234567891,
+    fecha_nac: "1988-08-22",
+    dni: 87654321,
+    deshabilitado: false,
+  },
+  {
+    email: "carlos.lopez@mail.com",
+    contraseña: "carlos789",
+    nombre: "Carlos",
+    apellido: "Lopez",
+    domicilio: "Calle Luna 333",
+    telefono: 1234567892,
+    fecha_nac: "1985-03-14",
+    dni: 23456789,
+    deshabilitado: false
+  },
+  {
+    email: "ana.martinez@mail.com",
+    contraseña: "ana123",
+    nombre: "Ana",
+    apellido: "Martinez",
+    domicilio: "Calle Sol 456",
+    telefono: 1234567893,
+    fecha_nac: "1992-11-30",
+    dni: 98765432,
+    deshabilitado: false
+  },
+  {
+    email: "luis.sanchez@mail.com",
+    contraseña: "luispass123",
+    nombre: "Luis",
+    apellido: "Sanchez",
+    domicilio: "Avenida Libertad 123",
+    telefono: 1234567894,
+    fecha_nac: "1995-05-10",
+    dni: 34567890,
+    deshabilitado: false
+  }
+];
   
   // Médico
   const medicos = [
@@ -293,31 +298,36 @@ const pacientes = [
       ID_Medico: 1,
       dia: "L",
       inicio: "08:00",
-      fin: "12:00"
+      fin: "12:00",
+      deshabilitado: false
     },
     {
       ID_Medico: 2,
       dia: "Ma",
       inicio: "09:00",
-      fin: "13:00"
+      fin: "13:00",
+      deshabilitado: false
     },
     {
       ID_Medico: 3,
       dia: "Mi",
       inicio: "10:00",
-      fin: "14:00"
+      fin: "14:00",
+      deshabilitado: false
     },
     {
       ID_Medico: 4,
       dia: "J",
       inicio: "08:00",
-      fin: "12:00"
+      fin: "12:00",
+      deshabilitado: false
     },
     {
       ID_Medico: 5,
       dia: "V",
       inicio: "09:00",
-      fin: "13:00"
+      fin: "13:00",
+      deshabilitado: false
     }
   ];
   

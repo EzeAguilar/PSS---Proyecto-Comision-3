@@ -47,7 +47,7 @@ export async function fetchPatient(id: number): Promise<Patient> {
         const formattedDate = date.toLocaleDateString('en-GB'); 
         return {
             id_paciente: row.id_paciente,
-            dni: 4000,
+            dni: row.dni,
             nombre: row.nombre,
             apellido: row.apellido,
             fecha_nac: formattedDate,
@@ -63,8 +63,8 @@ export async function fetchPatient(id: number): Promise<Patient> {
 
 export async function insertPatient(patient: Patient): Promise<void> {
     await sql`
-    INSERT INTO pacientes (nombre, apellido, fecha_nac, domicilio, telefono, email, deshabilitado, contraseña)
-    VALUES (${patient.nombre}, ${patient.apellido}, ${patient.fecha_nac}, ${patient.domicilio}, ${patient.telefono}, ${patient.email}, ${patient.deshabilitado}, ${patient.contraseña})
+    INSERT INTO pacientes (nombre, apellido, fecha_nac, domicilio, telefono, email, deshabilitado, contraseña, dni)
+    VALUES (${patient.nombre}, ${patient.apellido}, ${patient.fecha_nac}, ${patient.domicilio}, ${patient.telefono}, ${patient.email}, ${patient.deshabilitado}, ${patient.contraseña}, ${patient.dni})
     `;
 }
 
@@ -84,24 +84,29 @@ export async function deletePatient(id: number | undefined): Promise<void> {
 
     try {
         await sql`
-        DELETE FROM ficha_medica
+        UPDATE pacientes
+        SET deshabilitado = true
         WHERE ID_Paciente = ${id};
         `;
 
         await sql`
-        DELETE FROM citas
+        UPDATE ficha_medica
+        SET deshabilitado = true
         WHERE ID_Paciente = ${id};
         `;
 
         await sql`
-        DELETE FROM es_paciente_de
+        UPDATE citas
+        SET deshabilitado = true
         WHERE ID_Paciente = ${id};
         `;
 
         await sql`
-        DELETE FROM pacientes
+        UPDATE es_paciente_de
+        SET deshabilitado = true
         WHERE ID_Paciente = ${id};
         `;
+
 
         console.log(`Patient with ID ${id} deleted successfully.`);
     } catch (error) {
@@ -128,7 +133,7 @@ export async function insertDoctor(doctor: Doctor): Promise<void> {
 export async function editDoctor(doctor: Doctor): Promise<void> {
     await sql`
     UPDATE medicos
-    SET email = ${doctor.email}, contraseña = ${doctor.contraseña}, numero_matricula = ${doctor.numero_matricula}, nombre = ${doctor.nombre}, apellido = ${doctor.apellido}, dni = ${doctor.dni}, domicilio = ${doctor.domicilio}, fecha_nac = ${doctor.fecha_nac}, especialidad = ${doctor.especialidad}, telefono = ${doctor.telefono}, tiempo_consulta = ${doctor.tiempo_consulta}, deshabilitado = ${doctor.deshabilitado}
+    SET email = ${doctor.email}, numero_matricula = ${doctor.numero_matricula}, nombre = ${doctor.nombre}, apellido = ${doctor.apellido}, dni = ${doctor.dni}, domicilio = ${doctor.domicilio}, fecha_nac = ${doctor.fecha_nac}, especialidad = ${doctor.especialidad}, telefono = ${doctor.telefono}, tiempo_consulta = ${doctor.tiempo_consulta}, deshabilitado = ${doctor.deshabilitado}
     WHERE ID_Medico = ${doctor.id_medico}
     `;
     //CHEQUEAR, LO HIZO COPILOT
@@ -148,6 +153,32 @@ export async function deleteDoctor(id: number | undefined): Promise<void> {
         SET deshabilitado = true
         WHERE ID_Medico = ${id};
         `;
+
+        await sql`
+        UPDATE ficha_medica
+        SET deshabilitado = true
+        WHERE ID_Medico = ${id};
+        `;
+
+        await sql`
+        UPDATE citas
+        SET deshabilitado = true
+        WHERE ID_Medico = ${id};
+        `;
+
+        await sql`
+        UPDATE es_paciente_de
+        SET deshabilitado = true
+        WHERE ID_Medico = ${id};
+        `;
+
+        await sql`
+        UPDATE horarios
+        SET deshabilitado = true
+        WHERE ID_Medico = ${id};
+        `;
+
+
     
         console.log(`Doctor with ID ${id} disabled successfully.`);
     } catch (error) {

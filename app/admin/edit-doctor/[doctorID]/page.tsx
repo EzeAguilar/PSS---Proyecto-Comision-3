@@ -1,5 +1,5 @@
-import { fetchMedico, fetchPatient } from "@/app/lib/data";
-import { Doctor, Patient } from "@/app/lib/utils";
+import { fetchMedico } from "@/app/lib/data";
+import { Doctor } from "@/app/lib/utils";
 import EditDoctorClientPage from "@/app/components/ui/edit-doctor-client";
 
 interface Props {
