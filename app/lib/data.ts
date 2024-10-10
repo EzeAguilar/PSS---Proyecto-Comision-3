@@ -3,9 +3,54 @@ import { sql } from "@vercel/postgres";
 import { Horario, Patient } from "./utils";
 import { Doctor } from "./utils";
 import { unstable_noStore as noStore } from 'next/cache';
+import bcrypt from 'bcrypt';
 
 
+export async function doCredentialLogin(mail: string, pass: string): Promise<Doctor | Patient | null> {
+    noStore();
+    
+    const result = await sql`
+    SELECT * FROM medicos WHERE email = ${mail}
+    `;
 
+    if (result.rows.length > 0) {
+        const doctor = result.rows[0];
+        const isMatch = await bcrypt.compare(pass, doctor.contraseña);
+        if (isMatch) {
+            // @ts-ignore
+            return doctor;
+        }
+    }
+
+    const result2 = await sql`
+    SELECT * FROM pacientes WHERE email = ${mail} 
+    `;
+
+    if (result2.rows.length > 0) {
+        const paciente = result2.rows[0];
+        const isMatch = await bcrypt.compare(pass, paciente.contraseña);
+        if (isMatch) {
+            // @ts-ignore
+            return paciente;
+        }
+    }
+
+    const result3 = await sql`
+    SELECT * FROM administradores WHERE email = ${mail} 
+    `;
+    if (result3.rows.length > 0) {
+        console.log(result3.rows[0]);
+        const admin = result3.rows[0];
+        console.log(admin);
+        const isMatch = await bcrypt.compare(pass, admin.contraseña);
+        if (isMatch) {
+            // @ts-ignore
+            return admin;
+        }
+    }
+
+    return null;
+}
 
 export async function fetchMedico(id: number): Promise<Doctor> {
     noStore();
