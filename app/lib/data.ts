@@ -1,6 +1,6 @@
 "use server"
 import { sql } from "@vercel/postgres";
-import { Patient } from "./utils";
+import { Horario, Patient } from "./utils";
 import { Doctor } from "./utils";
 import { unstable_noStore as noStore } from 'next/cache';
 
@@ -123,11 +123,28 @@ export async function fetchAllPatients(): Promise<Patient[]> {
     return result.rows;
 }
 
-export async function insertDoctor(doctor: Doctor): Promise<void> {
+export async function insertDoctor(doctor: Doctor, horarios: Horario[]): Promise<void> {
     await sql`
     INSERT INTO medicos (email, contraseña, numero_matricula, nombre, apellido, dni, domicilio, fecha_nac, especialidad, telefono, tiempo_consulta, deshabilitado)
     VALUES (${doctor.email}, ${doctor.contraseña}, ${doctor.numero_matricula}, ${doctor.nombre}, ${doctor.apellido}, ${doctor.dni}, ${doctor.domicilio}, ${doctor.fecha_nac}, ${doctor.especialidad}, ${doctor.telefono}, ${doctor.tiempo_consulta}, ${doctor.deshabilitado})
     `;
+
+    const result = await sql`
+    SELECT id_medico FROM medicos WHERE dni = ${doctor.dni}
+    `;
+
+    const idMedico = result.rows[0]?.id_medico;
+
+    if (!idMedico) {
+        throw new Error("Médico no encontrado o error al obtener el id_medico.");
+    }
+
+    horarios.forEach(async (horario) => {
+        await sql`
+        INSERT INTO horarios (ID_Medico, dia, inicio, fin, deshabilitado)
+        VALUES (${idMedico}, ${horario.dia}, ${horario.inicio}, ${horario.fin}, false)
+        `;
+    })
 }
 
 export async function editDoctor(doctor: Doctor): Promise<void> {
