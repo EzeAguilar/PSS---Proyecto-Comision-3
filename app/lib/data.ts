@@ -1,12 +1,12 @@
 "use server"
 import { sql } from "@vercel/postgres";
-import { Horario, Patient } from "./utils";
+import { Horario, Patient, admin } from "./utils";
 import { Doctor } from "./utils";
 import { unstable_noStore as noStore } from 'next/cache';
 import bcrypt from 'bcrypt';
 
 
-export async function doCredentialLogin(mail: string, pass: string): Promise<Doctor | Patient | null> {
+export async function doCredentialLogin(mail: string, pass: string): Promise<Doctor | Patient | admin | null> {
     noStore();
     
     const result = await sql`
@@ -17,8 +17,22 @@ export async function doCredentialLogin(mail: string, pass: string): Promise<Doc
         const doctor = result.rows[0];
         const isMatch = await bcrypt.compare(pass, doctor.contraseña);
         if (isMatch) {
-            // @ts-ignore
-            return doctor;
+            
+            return {
+                id_medico: doctor.id_medico,
+                email: doctor.email,
+                contraseña: doctor.contraseña,
+                numero_matricula: doctor.numero_matricula,
+                nombre: doctor.nombre,
+                apellido: doctor.apellido,
+                dni: doctor.dni,
+                domicilio: doctor.domicilio,
+                fecha_nac: doctor.fecha_nac,
+                especialidad: doctor.especialidad,
+                telefono: doctor.telefono,
+                tiempo_consulta: doctor.tiempo_consulta,
+                deshabilitado: doctor.deshabilitado,
+            } as Doctor;
         }
     }
 
@@ -30,8 +44,19 @@ export async function doCredentialLogin(mail: string, pass: string): Promise<Doc
         const paciente = result2.rows[0];
         const isMatch = await bcrypt.compare(pass, paciente.contraseña);
         if (isMatch) {
-            // @ts-ignore
-            return paciente;
+            
+            return {
+                id_paciente: paciente.id_paciente,
+                dni: paciente.dni,
+                nombre: paciente.nombre,
+                apellido: paciente.apellido,
+                fecha_nac: paciente.fecha_nac,
+                domicilio: paciente.domicilio,
+                telefono: paciente.telefono,
+                email: paciente.email,
+                deshabilitado: paciente.deshabilitado,
+                contraseña: paciente.contraseña,
+            } as Patient;
         }
     }
 
@@ -44,8 +69,14 @@ export async function doCredentialLogin(mail: string, pass: string): Promise<Doc
         console.log(admin);
         const isMatch = await bcrypt.compare(pass, admin.contraseña);
         if (isMatch) {
-            // @ts-ignore
-            return admin;
+            
+            return {
+                id_admin: admin.id_admin,
+                email: admin.email,
+                contraseña: admin.contraseña,
+                fecha_creacion: admin.fecha_creacion,
+                deshabilitado: admin.deshabilitado,
+            } as admin;
         }
     }
 
