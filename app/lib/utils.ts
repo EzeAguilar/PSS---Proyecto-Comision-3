@@ -12,6 +12,14 @@ export const enum PATH_OPTIONS {
     editDoctor = "edit-doctor",
   };
 
+  export type admin = {
+    id_admin: number | undefined;
+    email: string;
+    contraseña: string;
+    fecha_creacion: string;
+    deshabilitado: boolean;
+  };
+
   export type Patient = {
     id_paciente: number | undefined;
     nombre: string;

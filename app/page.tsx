@@ -4,19 +4,16 @@ import { Input } from "./components/ui/input"
 import { Card, CardContent, CardFooter } from "./components/ui/card"
 import Link from "next/link"
 import Image from "next/image"
-import { useState } from "react"
 import { doCredentialLogin } from "./lib/data"
 import {useRouter} from "next/navigation"
 
 export default function Component() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+
   const router = useRouter();
 
   async function onSubmit(event: { preventDefault: () => void; currentTarget: HTMLFormElement | undefined; }) {
     event.preventDefault();
-    setLoading(true);
-    setError("");
+  
 
     
         const formData = new FormData(event.currentTarget);
@@ -28,21 +25,14 @@ export default function Component() {
           console.log(password);
           console.log(response);
           
-          if (response) {
-            //@ts-ignore
-            if (response.numero_matricula) {
-                router.push("medicos");
-                //@ts-ignore
-            } else if (!response.numero_matricula) {
-              //@ts-ignore
-                 if (response.fecha_creacion) {
-                  router.push("admin");
-                  //@ts-ignore
-              } else if (!response.fecha_creacion) {
-                  router.push("paciente");
-            } 
-            }
-        
+      if (response) {
+        if ('numero_matricula' in response) {
+            router.push("medicos");
+        } else if ('fecha_creacion' in response) {
+            router.push("admin");
+        } else {
+            router.push("paciente");
+        }
       }
     
 }
