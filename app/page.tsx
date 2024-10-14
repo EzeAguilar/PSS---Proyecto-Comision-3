@@ -4,7 +4,6 @@ import { Input } from "./components/ui/input"
 import { Card, CardContent, CardFooter } from "./components/ui/card"
 import Link from "next/link"
 import Image from "next/image"
-import { useState } from "react"
 import { doCredentialLogin } from "./lib/data"
 import {useRouter} from "next/navigation"
 
