@@ -6,14 +6,17 @@ import Link from "next/link"
 import Image from "next/image"
 import { doCredentialLogin } from "./lib/data"
 import {useRouter} from "next/navigation"
+import { useState } from "react"
 
 export default function Component() {
 
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(event: { preventDefault: () => void; currentTarget: HTMLFormElement | undefined; }) {
     event.preventDefault();
-  
+    setError(null); 
+
 
     
         const formData = new FormData(event.currentTarget);
@@ -21,18 +24,22 @@ export default function Component() {
         const password = formData.get("password") as string;
         const response = await doCredentialLogin(mail, password);
         
-          console.log(mail);
-          console.log(password);
-          console.log(response);
+        
           
       if (response) {
+        console.log("slkfhsdf");
         if ('numero_matricula' in response) {
             router.push("medicos");
         } else if ('fecha_creacion' in response) {
+          console.log("admin");
             router.push("admin");
         } else {
             router.push("paciente");
         }
+      }
+      if (!response) {
+        setError("Credenciales invalidas");
+        console.log("Credenciales invalidas");
       }
     
 }
@@ -68,6 +75,7 @@ export default function Component() {
                 </Button>
               </div>
             </form>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
           </CardContent>
           <CardFooter className="space-y-2">
             <Link className="text-sm text-gray-500 underline hover:no-underline" href="#">

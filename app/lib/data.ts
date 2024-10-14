@@ -9,6 +9,7 @@ import bcrypt from 'bcrypt';
 export async function doCredentialLogin(mail: string, pass: string): Promise<Doctor | Patient | admin | null> {
     noStore();
     
+    
     const result = await sql`
     SELECT * FROM medicos WHERE email = ${mail}
     `;
@@ -34,6 +35,10 @@ export async function doCredentialLogin(mail: string, pass: string): Promise<Doc
                 deshabilitado: doctor.deshabilitado,
             } as Doctor;
         }
+        else {
+            console.log("Contraseña incorrecta");
+            return null;
+        }
     }
 
     const result2 = await sql`
@@ -58,25 +63,33 @@ export async function doCredentialLogin(mail: string, pass: string): Promise<Doc
                 contraseña: paciente.contraseña,
             } as Patient;
         }
+        else {
+            console.log("Contraseña incorrecta");
+            return null;
+        }
     }
 
     const result3 = await sql`
     SELECT * FROM administradores WHERE email = ${mail} 
     `;
     if (result3.rows.length > 0) {
-        console.log(result3.rows[0]);
+        
         const admin = result3.rows[0];
-        console.log(admin);
+        
         const isMatch = await bcrypt.compare(pass, admin.contraseña);
         if (isMatch) {
             
             return {
-                id_admin: admin.id_admin,
+                id_admin: admin.id_administrador,
                 email: admin.email,
                 contraseña: admin.contraseña,
                 fecha_creacion: admin.fecha_creacion,
                 deshabilitado: admin.deshabilitado,
             } as admin;
+        }
+        else {
+            console.log("Contraseña incorrecta");
+            return null;
         }
     }
 
