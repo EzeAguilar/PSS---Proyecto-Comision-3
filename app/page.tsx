@@ -1,16 +1,59 @@
+"use client"
 import { Button } from "./components/ui/button"
 import { Input } from "./components/ui/input"
 import { Card, CardContent, CardFooter } from "./components/ui/card"
 import Link from "next/link"
 import Image from "next/image"
+import { useState } from "react"
+import { doCredentialLogin } from "./lib/data"
+import {useRouter} from "next/navigation"
 
 export default function Component() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  async function onSubmit(event: { preventDefault: () => void; currentTarget: HTMLFormElement | undefined; }) {
+    event.preventDefault();
+    setLoading(true);
+    setError("");
+
+    
+        const formData = new FormData(event.currentTarget);
+        const mail = formData.get("email") as string;
+        const password = formData.get("password") as string;
+        const response = await doCredentialLogin(mail, password);
+        
+          console.log(mail);
+          console.log(password);
+          console.log(response);
+          
+          if (response) {
+            //@ts-ignore
+            if (response.numero_matricula) {
+                router.push("medicos");
+                //@ts-ignore
+            } else if (!response.numero_matricula) {
+              //@ts-ignore
+                 if (response.fecha_creacion) {
+                  router.push("admin");
+                  //@ts-ignore
+              } else if (!response.fecha_creacion) {
+                  router.push("paciente");
+            } 
+            }
+        
+      }
+    
+}
+
+
   return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
         <h1 className="text-[2.9rem] font-bold text-center mb-6 text-black">Sistema Hospitalario</h1>
         <Card className="w-full max-w-md">
           <CardContent>
-            <form>
+            <form onSubmit={onSubmit}>
             <div className="space-y-4">
                 <div className="space-y-2 mt-5">
                   <label
@@ -19,7 +62,7 @@ export default function Component() {
                   >
                     Email
                   </label>
-                  <Input id="email" type="email" placeholder="Email" />
+                  <Input name="email" id="email" type="email" placeholder="Email" />
                 </div>
                 <div className="space-y-2">
                   <label
@@ -28,7 +71,7 @@ export default function Component() {
                   >
                     Contraseña
                   </label>
-                  <Input id="password" type="password" placeholder="Contraseña" />
+                  <Input id="password" name="password" type="password" placeholder="Contraseña" />
                 </div>
                 <Button className="bg-black w-full text-white" type="submit">
                   Iniciar sesión
