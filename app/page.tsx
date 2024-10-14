@@ -9,14 +9,12 @@ import { doCredentialLogin } from "./lib/data"
 import {useRouter} from "next/navigation"
 
 export default function Component() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+
   const router = useRouter();
 
   async function onSubmit(event: { preventDefault: () => void; currentTarget: HTMLFormElement | undefined; }) {
     event.preventDefault();
-    setLoading(true);
-    setError("");
+  
 
     
         const formData = new FormData(event.currentTarget);
