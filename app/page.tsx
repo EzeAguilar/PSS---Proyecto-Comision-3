@@ -28,21 +28,14 @@ export default function Component() {
           console.log(password);
           console.log(response);
           
-          if (response) {
-            //@ts-ignore
-            if (response.numero_matricula) {
-                router.push("medicos");
-                //@ts-ignore
-            } else if (!response.numero_matricula) {
-              //@ts-ignore
-                 if (response.fecha_creacion) {
-                  router.push("admin");
-                  //@ts-ignore
-              } else if (!response.fecha_creacion) {
-                  router.push("paciente");
-            } 
-            }
-        
+      if (response) {
+        if ('numero_matricula' in response) {
+            router.push("medicos");
+        } else if ('fecha_creacion' in response) {
+            router.push("admin");
+        } else {
+            router.push("paciente");
+        }
       }
     
 }
