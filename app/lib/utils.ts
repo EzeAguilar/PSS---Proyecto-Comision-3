@@ -2,7 +2,7 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
     return classes.filter(Boolean).join(' ');
   }
   
-export const enum PATH_OPTIONS {
+  export const enum PATH_OPTIONS {
     patients = "/admin",
     editPatient = "/admin/edit-patient",
     doctors = "/admin/doctors",
@@ -10,6 +10,11 @@ export const enum PATH_OPTIONS {
     newPatient = "/admin/new-patient",
     newDoctor = "new-doctor",
     editDoctor = "edit-doctor",
+    doctorPatients = "`/doctor/${id}`",
+    doctorCalendar = "/doctor/calendar",
+    appointments = "/patient",
+    scheduleAppointment = "/patient/new-appointment",
+    patientDoctors = "/patient/doctors"
   };
 
   export type admin = {
