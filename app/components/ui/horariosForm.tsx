@@ -1,13 +1,35 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/app/components/ui/button";
 import {Horario, diasSemana} from "@/app/lib/utils";
 
-const HorarioForm = ({ onConfirm, onCancel }: { onConfirm: (horarios: Horario[]) => void; onCancel: () => void }) => {
+
+interface HorarioFormProps {
+  horariosIniciales?: Horario[];
+  onConfirm: (horarios: Horario[]) => void;
+  onCancel: () => void;
+}
+
+const HorarioForm = ({ horariosIniciales, onConfirm, onCancel }: HorarioFormProps) => {
+  
   const [horarios, setHorarios] = useState<Horario[]>(
-    diasSemana.map(dia => ({ dia: dia.dia, inicio: "", fin: "", activo: false }))
+    horariosIniciales 
+      ? horariosIniciales.map(horario => ({
+          ...horario,
+          activo: Boolean(horario.inicio && horario.fin)
+        }))
+      : diasSemana.map(dia => ({ dia: dia.dia, inicio: "", fin: "", activo: false }))
   );
 
+  useEffect(() => {
+    if (horariosIniciales) {
+      setHorarios(horariosIniciales.map(horario => ({
+        ...horario,
+        activo: Boolean(horario.inicio && horario.fin)
+      })));
+    }
+  }, [horariosIniciales]);
+  
   const handleCheckboxChange = (index: number, value: boolean) => {
     const nuevosHorarios = [...horarios];
     nuevosHorarios[index] = { ...nuevosHorarios[index], ["activo"]: value };
@@ -27,23 +49,22 @@ const HorarioForm = ({ onConfirm, onCancel }: { onConfirm: (horarios: Horario[])
   const handleConfirm = () => {
     const horariosValidos: Horario[] = [];
     let error = false;
-
-    horarios.forEach((horario) => {
-        if (horario.activo && !error) {
+    horarios.forEach((horario, index) => {
+        if (horario?.activo && !error) {
             if ((horario.inicio && !horario.fin) || (!horario.inicio && horario.fin)){
                 error = true;
             } else if (horario.inicio && horario.fin) {
                 if (horario.fin <= horario.inicio) {
                     error = true;
                 } else {
-                    horariosValidos.push(horario);
+                    horariosValidos.push({ ...horario, dia: diasSemana[index].dia });
                 }
             }
         }
     });
 
     if (!error) {
-        console.log(horariosValidos);
+        console.log("CONFIRMO HORARIOS", horariosValidos);
         onConfirm(horariosValidos); // Aquí enviarías los horarios válidos
     }
     else{
@@ -53,32 +74,32 @@ const HorarioForm = ({ onConfirm, onCancel }: { onConfirm: (horarios: Horario[])
 
   return (
     <div className="border p-4 rounded-md shadow-md">
-      <h2 className="text-xl mb-4">Cargar horario</h2>
+      <h2 className="text-xl mb-4">Editar horario</h2>
       <div className="grid grid-cols-3 gap-4">
         {diasSemana.map((dia, index) => (
           <div key={dia.dia} className="flex items-center gap-4">
             <input
               type="checkbox"
-              checked={horarios[index].activo}
+              checked={horarios[index]?.activo || false}
               onChange={(e) => handleCheckboxChange(index, e.target.checked)}
             />
             <label className="w-20">{dia.nombre}:</label>
             <input
               type="time"
-              value={horarios[index].inicio}
-              disabled={!horarios[index].activo}
+              value={horarios[index]?.inicio || ""}
+              disabled={!horarios[index]?.activo}
               className={`p-2 border rounded-md w-24 ${
-                !horarios[index].activo ? 'bg-gray-200' : ''
+                !horarios[index]?.activo ? 'bg-gray-200' : ''
               }`}
               onChange={(e) => handleHorarioChange(index, 'inicio', e.target.value)}
             />
             <span>-</span>
             <input
               type="time"
-              value={horarios[index].fin}
-              disabled={!horarios[index].activo}
+              value={horarios[index]?.fin || ""}
+              disabled={!horarios[index]?.activo}
               className={`p-2 border rounded-md w-24 ${
-                !horarios[index].activo ? 'bg-gray-200' : ''
+                !horarios[index]?.activo ? 'bg-gray-200' : ''
               }`}
               onChange={(e) => handleHorarioChange(index, 'fin', e.target.value)}
             />
@@ -89,7 +110,10 @@ const HorarioForm = ({ onConfirm, onCancel }: { onConfirm: (horarios: Horario[])
         <Button className="bg-red-600 text-white px-4 py-2 rounded-md" onClick={onCancel}>
           Cancelar
         </Button>
-        <Button className="bg-gray-700 text-white px-4 py-2 rounded-md" onClick={handleConfirm}>
+        <Button className="bg-gray-700 text-white px-4 py-2 rounded-md"
+          onClick={() => {
+            handleConfirm();
+          }}>
           Confirmar
         </Button>
       </div>

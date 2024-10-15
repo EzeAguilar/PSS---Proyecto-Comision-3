@@ -99,9 +99,9 @@ export async function doCredentialLogin(mail: string, pass: string): Promise<Doc
 export async function fetchMedico(id: number): Promise<Doctor> {
     noStore();
     const result = await sql<Doctor>`
-      SELECT * FROM medicos WHERE ID_Medico = ${id}
+      SELECT * FROM medicos WHERE id_medico = ${id}
     `;
-  
+    
     const medico = result.rows.map((row) => {
       const date = new Date(row.fecha_nac);
       const formattedDate = date.toLocaleDateString('en-GB');
@@ -121,7 +121,7 @@ export async function fetchMedico(id: number): Promise<Doctor> {
         deshabilitado: row.deshabilitado,
       };
     });
-  
+
     return medico[0]; // Asumiendo que solo habrá un médico con el ID dado
   }
 
@@ -316,4 +316,27 @@ export async function searchDoctors(query: string): Promise<Doctor[]> {
     SELECT * FROM medicos
     `;
     return result.rows;
+}
+
+export async function fetchHorarios(id: number): Promise<Horario[]> {
+    noStore();
+    const result = await sql<Horario>`
+    SELECT * FROM horarios WHERE id_medico = ${id}
+    `;
+    return result.rows;
+}
+
+export async function editHorarios(idMedico: number, horarios: Horario[]): Promise<void> {
+    // Elimina los horarios existentes para el médico
+    await sql`
+    DELETE FROM horarios WHERE ID_Medico = ${idMedico};
+    `;
+    console.log("ESTOS HORARIOS SE QUIEREN INSERTAR", horarios, "LOG EN DATA.TS");
+    // Inserta los nuevos horarios
+    horarios.forEach(async (horario) => {
+        await sql`
+        INSERT INTO horarios (ID_Medico, dia, inicio, fin, deshabilitado)
+        VALUES (${idMedico}, ${horario.dia}, ${horario.inicio}, ${horario.fin}, false)
+        `;
+    });
 }

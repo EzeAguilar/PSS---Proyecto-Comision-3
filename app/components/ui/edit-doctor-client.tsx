@@ -3,18 +3,22 @@
 import { useState, FormEvent, useEffect } from "react";
 import { Button } from "@/app/components/ui/button";
 import NewDoctorForm from "@/app/components/ui/newDoctorForm";
-import { Doctor } from "@/app/lib/utils";
+import { Doctor, Horario } from "@/app/lib/utils";
 import { useRouter } from "next/navigation";
-import { editDoctor } from "@/app/lib/data";
+import { editDoctor, editHorarios } from "@/app/lib/data";
+import HorarioForm from "./horariosForm";
 
 type FormFieldValue = string | number;
 
 interface EditDoctorClientPageProps {
     medicoData: Doctor;
+    medicoHorarios: Horario[];
 }
 
-const EditDoctorClientPage = ({ medicoData }: EditDoctorClientPageProps) => {
+const EditDoctorClientPage = ({ medicoData, medicoHorarios }: EditDoctorClientPageProps) => {
     const router = useRouter();
+    const [mostrarHorario, setMostrarHorario] = useState(false);
+    const [horarios, setHorarios] = useState<Horario[]>([]);
 
     const formatDateToDisplay = (dateString: string) => {
         const dateParts = dateString.split('-');
@@ -81,40 +85,73 @@ const EditDoctorClientPage = ({ medicoData }: EditDoctorClientPageProps) => {
 
     const handleSaveClick = async () => {
         try {
-            console.log("Guardando paciente...", formData);
+            console.log("Guardando doctor...", formData);
             const formattedFormData = {
                 ...formData,
                 fecha_nac: formatDateToDatabase(formData.fecha_nac), // Formatear la fecha para la base de datos
             };
             await editDoctor(formattedFormData);
-            console.log("Paciente actualizado correctamente");
+            console.log("Doctor actualizado correctamente");
             router.push('/admin/doctors');
         } catch (error) {
-            console.error("Error al actualizar el paciente:", error);
+            console.error("Error al actualizar el doctor:", error);
+        }
+    };
+
+    const handleHorarios = async (horarios: Horario[]) => {
+        if (medicoData.id_medico === undefined) {
+            console.error("ID de médico es undefined");
+            return; // Salir si no hay un ID válido
+        }
+    
+        try {
+            console.log("ESTOS HORARIOS QUIERO INSERTAR, ESTOY ANTES DEL AWAIT EN EDIT-DOCTOR-CLIENT", horarios);
+            await editHorarios(medicoData.id_medico, horarios);
+            setHorarios(horarios);
+            setMostrarHorario(false);
+        } catch (error) {
+            console.error("Error al actualizar horarios:", error);
         }
     };
 
     return (
+        <>
+        {!mostrarHorario ? (
         <form onSubmit={handleSubmit} className="flex flex-col gap-10">
             <h1>Edit Doctor</h1>
             <NewDoctorForm formData={formData} handleInputChange={handleInputChange} insercion={false}/>
             <div className="flex justify-center items-center gap-3">
+            <Button
+                  type="button"
+                  className="bg-black text-white px-4 py-2 rounded-md"
+                  onClick={() => setMostrarHorario(true)}
+                >
+                  Editar horarios
+                </Button>
                 <Button
                     type="submit"
-                    className="bg-red-600 text-white px-4 py-2 rounded-md"
+                    className="bg-gray-700 text-white px-4 py-2 rounded-md"
                     onClick={handleSaveClick}
-                >
+                    >
                     Guardar
                 </Button>
                 <Button
                     variant="destructive"
-                    className="bg-gray-700 text-white px-4 py-2 rounded-md"
+                    className="bg-red-600 text-white px-4 py-2 rounded-md"
                     onClick={() => router.push('/admin/doctors')}
                 >
                     Cancelar
                 </Button>
             </div>
         </form>
+        ) : (
+            <HorarioForm
+                horariosIniciales={medicoHorarios}
+                onConfirm={handleHorarios}
+              onCancel={() => setMostrarHorario(false)}
+            />
+          )}
+        </>
     );
 };
 

@@ -34,7 +34,7 @@ export default function Component() {
           console.log("admin");
             router.push("admin");
         } else {
-            router.push("paciente");
+            router.push("patient");
         }
       }
       if (!response) {

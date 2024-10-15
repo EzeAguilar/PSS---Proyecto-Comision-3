@@ -8,83 +8,136 @@ const months = [
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
 ];
 
+// Array de los días de la semana
+const daysOfWeek = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+
 // Componente para crear el calendario
 const Page = () => {
-    // Establecer el mes y año actuales
     const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
     const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
-    // Función para obtener los días del mes
     const getDaysInMonth = (month: number, year: number) => {
-        return new Date(year, month + 1, 0).getDate(); // Obtiene el número de días en el mes
+        return new Date(year, month + 1, 0).getDate();
     };
 
-    // Función para manejar el cambio de mes
     const changeMonth = (direction: string) => {
         if (direction === 'next') {
-            if (currentMonth === 11) { // Diciembre
-                setCurrentMonth(0); // Enero
-                setCurrentYear(currentYear + 1); // Incrementa el año
+            if (currentMonth === 11) {
+                setCurrentMonth(0);
+                setCurrentYear(currentYear + 1);
             } else {
-                setCurrentMonth(currentMonth + 1); // Incrementa el mes
+                setCurrentMonth(currentMonth + 1);
             }
         } else if (direction === 'prev') {
-            if (currentMonth === 0) { // Enero
-                setCurrentMonth(11); // Diciembre
-                setCurrentYear(currentYear - 1); // Decrementa el año
+            if (currentMonth === 0) {
+                setCurrentMonth(11);
+                setCurrentYear(currentYear - 1);
             } else {
-                setCurrentMonth(currentMonth - 1); // Decrementa el mes
+                setCurrentMonth(currentMonth - 1);
             }
         }
     };
 
-    // Generar el calendario
     const renderCalendar = () => {
         const daysInMonth = getDaysInMonth(currentMonth, currentYear);
         const startDay = new Date(currentYear, currentMonth, 1).getDay();
-
-        const days = [];
-
-        // Agregar los días vacíos al principio
-        for (let i = 0; i < startDay; i++) {
-            days.push(<div key={`empty-${i}`} className="border border-gray-300 "></div>);
-        }
-
-        // Agregar los días del mes
-        for (let day = 1; day <= daysInMonth; day++) {
-            days.push(
-                <div key={day} className="border border-gray-300 h-16 flex items-center justify-center">
+        const prevMonthDays = getDaysInMonth(
+            currentMonth === 0 ? 11 : currentMonth - 1,
+            currentMonth === 0 ? currentYear - 1 : currentYear
+        );
+    
+        const calendar = [];
+        const today = new Date(); // Obtener la fecha actual
+    
+        // Agregar los días de la semana
+        daysOfWeek.forEach((day) => {
+            calendar.push(
+                <div
+                    key={`day-${day}`}
+                    className="border h-24 flex items-center justify-center"
+                >
                     {day}
                 </div>
             );
+        });
+    
+        // Agregar días del mes anterior al inicio si el mes no empieza en domingo
+        for (let i = startDay - 1; i >= 0; i--) {
+            calendar.push(
+                <div
+                    key={`prev-${i}`}
+                    className="border h-24 flex items-center justify-center text-gray-400"
+                >
+                    {prevMonthDays - i}
+                </div>
+            );
         }
-
-        return days;
+    
+        // Agregar los días del mes actual
+        for (let day = 1; day <= daysInMonth; day++) {
+            const isToday = day === today.getDate() && 
+                            currentMonth === today.getMonth() && 
+                            currentYear === today.getFullYear();
+    
+            calendar.push(
+                <div key={day} className={`border h-24 flex items-center justify-center ${isToday ? 'rounded-' : ''}`}>
+                    {isToday ? (
+                        <div className="flex items-center justify-center">
+                            <span className="text-blue-500 bg-white rounded-full border border-blue-500 w-12 h-12 flex items-center justify-center">
+                            {day}
+                            </span>
+                        </div>
+                    ) : (
+                        <span>{day}</span>
+                    )}
+                </div>
+            );
+        }
+    
+        // Agregar días del siguiente mes al final si la fila no está completa
+        const totalCells = calendar.length;
+        const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+        for (let i = 1; i <= remainingCells; i++) {
+            calendar.push(
+                <div
+                    key={`next-${i}`}
+                    className="border h-24 flex items-center justify-center text-gray-400"
+                >
+                    {i}
+                </div>
+            );
+        }
+    
+        return calendar;
     };
-
-    // Cambia la sección donde se renderizan los días de la semana
-    const daysOfWeek = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+    
 
     return (
-        <div className="flex flex-col items-center">
-            <h1 className="text-3xl justify-center items-center font-bold text-center mb-4">{months[currentMonth]}</h1>
-            <div className="grid grid-cols-7 border border-gray-300" style={{ width: '90vw', gap: '0' }}>
-                {daysOfWeek.map((day) => (
-                    <div key={day} className="border border-gray-300 h-16 flex items-center justify-center">
-                        {day}
-                    </div>
-                ))}
-            </div>
-            <div className="grid grid-cols-7 border border-gray-300" style={{ width: '90vw', gap: '0' }}>
-                {renderCalendar()}
-            </div>
-            <div className="flex justify-between mt-4 w-full px-16">
-                <button onClick={() => changeMonth('prev')} className="text-black">
-                    ←
-                </button>
-                <button onClick={() => changeMonth('next')} className="text-black">
-                    →
-                </button>
+        <div className="flex ml-32 mr-32">
+            <div className="flex-1 flex-col">
+                <div className="flex justify-center items-center mb-3">
+                    <h1 className="text-[2.8rem] font-bold">
+                        {months[currentMonth]}
+                    </h1>
+                </div>
+
+                {/* Días del calendario incluyendo días de la semana */}
+                <div className="grid grid-cols-7 gap-0">
+                    {renderCalendar()}
+                </div>
+
+                {/* Flechas de navegación */}
+                <div className="flex justify-between pt-1">
+                    <button
+                        onClick={() => changeMonth('prev')}
+                        className="text-[3rem] rotate-180"
+                    >
+                        ➔
+                    </button>
+                    <button onClick={() => changeMonth('next')} className="text-[3rem]">
+                        ➔
+                    </button>
+                </div>
             </div>
         </div>
     );
