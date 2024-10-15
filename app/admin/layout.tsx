@@ -10,7 +10,7 @@ const Layout: React.FC<LayoutProps> = ({ children }: LayoutProps) => {
     <div>
       <Header />
       <Sidebar />
-      <main className="ml-64 p-8">
+      <main className="md:ml-64 p-8">
         {children}
       </main>
     </div>

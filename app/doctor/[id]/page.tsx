@@ -29,7 +29,7 @@ const PatientsPage = () => {
       console.log(allPatients[0].apellido);
     };
     loadPatients();
-  }, [showDisabled]);
+  }, [showDisabled, id]);
 
   const handleDeletePatient = async () => {
     if (selectedPatientId !== null) {

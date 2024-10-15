@@ -106,7 +106,6 @@ const DoctorsPage = () => {
               <th className="px-4 py-2 border">Domicilio</th>
               <th className="px-4 py-2 border">Teléfono</th>
               <th className="px-4 py-2 border">Deshabilitado</th>
-              {showDisabled === false && <th className="px-4 py-2 border">Acciones</th>}
             </tr>
           </thead>
           <tbody>
@@ -118,7 +117,7 @@ const DoctorsPage = () => {
                 <td className="px-4 py-2 border">{medico.domicilio}</td>
                 <td className="px-4 py-2 border">{medico.telefono}</td>
                 <td className="px-4 py-2 border">{medico.deshabilitado ? "Sí" : "No"}</td>
-                {showDisabled === false && (
+                {!showDisabled && (
                     <td className="px-4 py-2 flex space-x-4">
                       {/* Iconos de editar y eliminar al final de la fila */}
                       <FaEdit

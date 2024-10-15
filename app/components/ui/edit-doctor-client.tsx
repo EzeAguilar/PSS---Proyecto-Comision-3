@@ -42,8 +42,9 @@ const EditDoctorClientPage = ({ medicoData, medicoHorarios }: EditDoctorClientPa
     });
 
     useEffect (() => {
-        console.log(medicoData.fecha_nac);
-    }, [medicoData.fecha_nac]);
+        console.log(medicoData);
+        console.log(medicoHorarios);
+    }, [medicoData, medicoHorarios]);
 
     const handleInputChange = (field: keyof Doctor, value: FormFieldValue) => {
         setFormData((prevForm) => ({
@@ -52,7 +53,7 @@ const EditDoctorClientPage = ({ medicoData, medicoHorarios }: EditDoctorClientPa
         }));
     };
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         console.log(formData);
@@ -80,22 +81,10 @@ const EditDoctorClientPage = ({ medicoData, medicoHorarios }: EditDoctorClientPa
             fecha_nac: formatDateToDatabase(formData.fecha_nac), // Formatear la fecha para la base de datos
         };
 
-        editDoctor(formattedFormData);
-    };
-
-    const handleSaveClick = async () => {
-        try {
-            console.log("Guardando doctor...", formData);
-            const formattedFormData = {
-                ...formData,
-                fecha_nac: formatDateToDatabase(formData.fecha_nac), // Formatear la fecha para la base de datos
-            };
-            await editDoctor(formattedFormData);
-            console.log("Doctor actualizado correctamente");
-            router.push('/admin/doctors');
-        } catch (error) {
-            console.error("Error al actualizar el doctor:", error);
-        }
+        await editDoctor(formattedFormData);
+        await editHorarios(medicoData.id_medico, horarios);
+        console.log("horarios bien");
+        router.push('/admin/doctors');
     };
 
     const handleHorarios = async (horarios: Horario[]) => {
@@ -103,10 +92,9 @@ const EditDoctorClientPage = ({ medicoData, medicoHorarios }: EditDoctorClientPa
             console.error("ID de médico es undefined");
             return; // Salir si no hay un ID válido
         }
-    
+        console.log("estoy adentro handle");
         try {
             console.log("ESTOS HORARIOS QUIERO INSERTAR, ESTOY ANTES DEL AWAIT EN EDIT-DOCTOR-CLIENT", horarios);
-            await editHorarios(medicoData.id_medico, horarios);
             setHorarios(horarios);
             setMostrarHorario(false);
         } catch (error) {
@@ -131,7 +119,6 @@ const EditDoctorClientPage = ({ medicoData, medicoHorarios }: EditDoctorClientPa
                 <Button
                     type="submit"
                     className="bg-gray-700 text-white px-4 py-2 rounded-md"
-                    onClick={handleSaveClick}
                     >
                     Guardar
                 </Button>
