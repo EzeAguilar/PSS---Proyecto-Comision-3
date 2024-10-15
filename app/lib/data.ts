@@ -151,25 +151,25 @@ export async function fetchPatient(id: number): Promise<Patient> {
 }
 
 const ITEMS_PER_PAGE = 3;
-
 export async function fetchPatientPages(query: string): Promise<number> {
     noStore();
     try {
-        const result = await sql`
-            SELECT COUNT(*)
-            FROM pacientes
-            WHERE
-                nombre ILIKE ${`%${query}%`} 
-        `;
-        const count = parseInt(result.rows[0].count, 10);
-        return Math.ceil(count / ITEMS_PER_PAGE);
+      const count = await sql`
+        SELECT COUNT(*)
+        FROM pacientes
+        WHERE
+          nombre ILIKE ${`%${query}%`} OR
+          apellido ILIKE ${`%${query}%`} OR
+          CAST(dni AS TEXT) ILIKE ${`%${query}%`}
+      `;
+  
+      const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+      return totalPages;
     } catch (error) {
-        console.error("Error fetching patient pages:", error);
-        throw error;
+      console.error('Database Error:', error);
+      throw new Error('Failed to fetch total number of patients.');
     }
-}
-
-
+  }
 
   export async function fetchFilteredPatients(
     query: string,
@@ -183,7 +183,9 @@ export async function fetchPatientPages(query: string): Promise<number> {
         SELECT *
         FROM pacientes
         WHERE
-          nombre ILIKE ${`%${query}%`}
+          nombre ILIKE ${`%${query}%`} OR
+          apellido ILIKE ${`%${query}%`} OR
+          CAST(dni AS TEXT) ILIKE ${`%${query}%`}
         ORDER BY nombre DESC
         LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
       `;
