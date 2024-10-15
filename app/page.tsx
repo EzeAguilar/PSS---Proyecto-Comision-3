@@ -77,13 +77,9 @@ export default function Component() {
             </form>
             {error && <p style={{ color: 'red' }}>{error}</p>}
           </CardContent>
-          <CardFooter className="space-y-2">
-            <Link className="text-sm text-gray-500 underline hover:no-underline" href="#">
-              ¿Olvidaste tu contraseña?
-            </Link>
-          </CardFooter>
+          
         </Card>
-        <Link className="block text-[1.6rem] text-blue-600 underline mt-4 text-center hover:no-underline" href="#">
+        <Link className="block text-[1rem] text-black-600 underline mt-4 text-center hover:no-underline" href="registro-paciente">
           Registrarse como paciente
         </Link>
 
