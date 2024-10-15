@@ -14,6 +14,7 @@ export default function Component() {
   const [error, setError] = useState<string | null>(null);
 
   
+  
   async function onSubmit(event: { preventDefault: () => void; currentTarget: HTMLFormElement | undefined; }) {
     event.preventDefault();
     setError(null); 
