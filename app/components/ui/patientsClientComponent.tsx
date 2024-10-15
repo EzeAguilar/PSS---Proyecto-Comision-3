@@ -6,7 +6,7 @@ import {PATH_OPTIONS, Patient} from "@/app/lib/utils";
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
 import {useEffect, useState} from "react";
-import {deletePatient, fetchAllPatients} from "@/app/lib/data";
+import {deletePatient} from "@/app/lib/data";
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Asegúrate de tener react-icons instalado
 
 const PatientsPage = ({pacientes, pages}: {pacientes: Patient[], pages: number}) => {
