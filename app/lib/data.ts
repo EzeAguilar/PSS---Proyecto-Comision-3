@@ -382,7 +382,7 @@ export async function fetchHorarios(id: number): Promise<Horario[]> {
     return result.rows;
 }
 
-export async function editHorarios(idMedico: number, horarios: Horario[]): Promise<void> {
+export async function editHorarios(idMedico: number | undefined, horarios: Horario[]): Promise<void> {
     // Elimina los horarios existentes para el médico
     await sql`
     DELETE FROM horarios WHERE ID_Medico = ${idMedico};
