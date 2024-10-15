@@ -1,5 +1,4 @@
 import DoctorInformationPage from "@/app/components/ui/DoctorInformationPage";
-import PatientInformationPage from "@/app/components/ui/PatientInformationPage";
 import { fetchMedico } from "@/app/lib/data";
 import { Doctor } from "@/app/lib/utils";
 
