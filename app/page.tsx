@@ -13,6 +13,7 @@ export default function Component() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
+  
   async function onSubmit(event: { preventDefault: () => void; currentTarget: HTMLFormElement | undefined; }) {
     event.preventDefault();
     setError(null); 
