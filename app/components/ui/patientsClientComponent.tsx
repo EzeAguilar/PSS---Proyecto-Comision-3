@@ -133,7 +133,6 @@ const PatientsPage = ({pacientes, pages}: {pacientes: Patient[], pages: number})
                 <th className="px-4 py-2 border">DNI</th>
                 <th className="px-4 py-2 border">Domicilio</th>
                 <th className="px-4 py-2 border">Teléfono</th>
-                {showDisabled === false && <th className="px-4 py-2 border">Acciones</th>}
               </tr>
             </thead>
             <tbody>
@@ -144,7 +143,7 @@ const PatientsPage = ({pacientes, pages}: {pacientes: Patient[], pages: number})
                   <td className="px-4 py-2 border">{patient.dni}</td>
                   <td className="px-4 py-2 border">{patient.domicilio}</td>
                   <td className="px-4 py-2 border">{patient.telefono}</td>
-                  {showDisabled === false && (
+                  {!showDisabled && (
                     <td className="px-4 py-2 flex space-x-4">
                       {/* Iconos de editar y eliminar al final de la fila */}
                       <FaEdit

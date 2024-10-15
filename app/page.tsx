@@ -1,7 +1,7 @@
 "use client"
 import { Button } from "./components/ui/button"
 import { Input } from "./components/ui/input"
-import { Card, CardContent, CardFooter } from "./components/ui/card"
+import { Card, CardContent } from "./components/ui/card"
 import Link from "next/link"
 import Image from "next/image"
 import { doCredentialLogin } from "./lib/data"
@@ -43,7 +43,6 @@ export default function Component() {
       }
     
 }
-
 
   return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">

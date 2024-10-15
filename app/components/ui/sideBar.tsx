@@ -15,8 +15,8 @@ const Sidebar = () => {
 
   const getButtonClassName = (path: string) => {
     return activePath === path
-      ? "relative text-black font-semibold text-[1.7em] hover:no-underline pb-2 before:block before:absolute before:-bottom-1 before:left-[15%] before:h-[3px] before:w-[75%] before:bg-black"
-      : "text-black hover:no-underline text-[1.7rem]";
+      ? "relative text-black font-semibold text-xl hover:no-underline pb-2 before:block before:absolute before:-bottom-1 before:left-[15%] before:h-[3px] before:w-[75%] before:bg-black"
+      : "text-black hover:no-underline text-xl";
   };
 
   return (
