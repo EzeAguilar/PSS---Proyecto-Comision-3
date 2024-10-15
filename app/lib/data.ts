@@ -160,6 +160,7 @@ export async function fetchPatientPages(query: string): Promise<number> {
         WHERE
           nombre ILIKE ${`%${query}%`} OR
           apellido ILIKE ${`%${query}%`}
+                      
       `;
   
       const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
@@ -184,6 +185,7 @@ export async function fetchPatientPages(query: string): Promise<number> {
         WHERE
           nombre ILIKE ${`%${query}%`} OR
           apellido ILIKE ${`%${query}%`}
+
         ORDER BY nombre DESC
         LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
       `;
@@ -248,6 +250,7 @@ export async function deletePatient(id: number | undefined): Promise<void> {
         throw error;
     }
 }
+
 
 export async function fetchAllPatients(): Promise<Patient[]> {
     noStore();
