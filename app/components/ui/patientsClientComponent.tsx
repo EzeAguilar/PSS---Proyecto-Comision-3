@@ -25,7 +25,7 @@ const PatientsPage = ({pacientes, pages}: {pacientes: Patient[], pages: number})
       setFilteredPatients(pacientes.filter(patient => patient.deshabilitado === showDisabled));
     };
     loadPatients();
-  }, [showDisabled]);
+  }, [showDisabled, pacientes]);
 
   const editPatient = (patient: Patient) => {
     const patientId = patient.id_paciente ?? 0; // Usa 0 u otro valor predeterminado si id es undefined
