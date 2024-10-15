@@ -1,4 +1,4 @@
-import { Doctor, Patient } from "@/app/lib/utils";
+import { Doctor } from "@/app/lib/utils";
 
 interface DoctorInformationPageProps {
     doctorData: Doctor;
