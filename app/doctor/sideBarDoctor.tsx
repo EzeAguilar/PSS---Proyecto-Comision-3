@@ -3,19 +3,20 @@ import { useRouter } from "next/navigation";
 import { PATH_OPTIONS } from "@/app/lib/utils";
 import { useState } from "react";
 import { Button } from "../components/ui/button";
-
+import { useParams } from "next/navigation";
 const Sidebar = () => {
   const router = useRouter();
-
+  const params = useParams();
+  const id = parseInt(params.id as string, 10); 
   const [activePath, setActivePath] = useState<string | null>(null);
 
   const handleNavigation = (path: string) => {
     setActivePath(path);
     if (path === PATH_OPTIONS.doctorPatients) {
-      router.push(PATH_OPTIONS.doctorPatients);
+      router.push(`/doctor/${id}`);
     }
     else if (path === PATH_OPTIONS.doctorCalendar) {
-      router.push(PATH_OPTIONS.doctorCalendar);
+      router.push(`/doctor/${id}/calendar`);
     }
   }
 
