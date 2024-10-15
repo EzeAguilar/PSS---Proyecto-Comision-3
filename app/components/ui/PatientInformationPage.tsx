@@ -1,4 +1,5 @@
 import { Patient } from "@/app/lib/utils";
+import React from "react";
 
 interface PatientInformationPageProps {
     patientData: Patient;
