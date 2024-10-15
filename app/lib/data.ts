@@ -150,6 +150,53 @@ export async function fetchPatient(id: number): Promise<Patient> {
     return patient[0];
 }
 
+const ITEMS_PER_PAGE = 3;
+export async function fetchPatientPages(query: string): Promise<number> {
+    noStore();
+    try {
+      const count = await sql`
+        SELECT COUNT(*)
+        FROM pacientes
+        WHERE
+          nombre ILIKE ${`%${query}%`} OR
+          apellido ILIKE ${`%${query}%`} OR
+          CAST(dni AS TEXT) ILIKE ${`%${query}%`}
+      `;
+  
+      const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+      return totalPages;
+    } catch (error) {
+      console.error('Database Error:', error);
+      throw new Error('Failed to fetch total number of patients.');
+    }
+  }
+
+  export async function fetchFilteredPatients(
+    query: string,
+    currentPage: number,
+  ): Promise<Patient[]> {
+    noStore();
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  
+    try {
+      const patients = await sql<Patient>`
+        SELECT *
+        FROM pacientes
+        WHERE
+          nombre ILIKE ${`%${query}%`} OR
+          apellido ILIKE ${`%${query}%`} OR
+          CAST(dni AS TEXT) ILIKE ${`%${query}%`}
+        ORDER BY nombre DESC
+        LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+      `;
+  
+      return patients.rows;
+    } catch (error) {
+      console.error('Database Error:', error);
+      throw new Error('Failed to fetch patients.');
+    }
+  }
+
 export async function insertPatient(patient: Patient): Promise<void> {
     await sql`
     INSERT INTO pacientes (nombre, apellido, fecha_nac, domicilio, telefono, email, deshabilitado, contraseña, dni)
