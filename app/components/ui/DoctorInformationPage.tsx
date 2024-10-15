@@ -1,11 +1,19 @@
+'use client';
+
 import { Doctor } from "@/app/lib/utils";
+import { Button } from "./button";
+import HorarioPanel from "./horariosPanel";
+import { useState } from "react";
 
 interface DoctorInformationPageProps {
     doctorData: Doctor;
 }
 
 const DoctorInformationPage: React.FC<DoctorInformationPageProps> = ({ doctorData }) => {
+    const [mostrarHorario, setMostrarHorario] = useState(false);
     return (
+        <>
+        {!mostrarHorario ? (
         <div className="sm:mr-0 sm:px-4 md:mr-[10%] flex flex-col gap-4 mb-40">
             <h1 className="text-2xl font-bold mb-6 text-start sm:text-center">Información del Doctor</h1>
             <div className="bg-white rounded-lg border border-gray-300 p-8 w-full shadow-md flex flex-col justify-center sm:p-4 md:p-6">
@@ -47,9 +55,11 @@ const DoctorInformationPage: React.FC<DoctorInformationPageProps> = ({ doctorDat
                         <p className="text-right sm:text-left">{doctorData.tiempo_consulta} minutos</p>
                     </div>
                     <div className="flex justify-end items-end pt-10">
-                        <button className=" p-5 md:max-w-[40%] sm:w-full bg-black text-white py-2 rounded-lg hover:bg-gray-700 transition-colors">
-                            ver Horarios
-                        </button>
+                        <Button className=" p-5 md:max-w-[40%] sm:w-full bg-black text-white py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                            onClick={() => setMostrarHorario(true)}
+                        >
+                            Ver Horarios
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -59,6 +69,13 @@ const DoctorInformationPage: React.FC<DoctorInformationPageProps> = ({ doctorDat
                 </button>
             </div>
         </div>
+        ) : (
+            <HorarioPanel
+                idMedico={doctorData.id_medico}
+                onClose={() => setMostrarHorario(false)}                  
+            />
+        )}
+        </>
     );
 }
 
