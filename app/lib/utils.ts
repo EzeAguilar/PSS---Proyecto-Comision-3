@@ -10,6 +10,8 @@ export const enum PATH_OPTIONS {
     newPatient = "/admin/new-patient",
     newDoctor = "new-doctor",
     editDoctor = "edit-doctor",
+    doctorPatients = "/doctor",
+    doctorCalendar = "/doctor/calendar",
     appointments = "/patient",
     scheduleAppointment = "/patient/new-appointment",
     patientDoctors = "/patient/doctors"

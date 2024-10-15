@@ -29,7 +29,7 @@ export default function Component() {
       if (response) {
         console.log("slkfhsdf");
         if ('numero_matricula' in response) {
-            router.push("medicos");
+            router.push("doctor");
         } else if ('fecha_creacion' in response) {
           console.log("admin");
             router.push("admin");

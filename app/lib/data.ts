@@ -212,6 +212,15 @@ export async function fetchAllPatients(): Promise<Patient[]> {
     return result.rows;
 }
 
+export async function fetchAllDoctorPatients(id: number): Promise<Patient[]> {
+    noStore();
+    const result = await sql<Patient>`
+    SELECT * FROM pacientes
+    WHERE ID_Paciente IN (SELECT ID_Paciente FROM es_paciente_de WHERE ID_Medico = ${id})
+    `;
+    return result.rows;
+}
+
 export async function insertDoctor(doctor: Doctor, horarios: Horario[]): Promise<void> {
     await sql`
     INSERT INTO medicos (email, contraseña, numero_matricula, nombre, apellido, dni, domicilio, fecha_nac, especialidad, telefono, tiempo_consulta, deshabilitado)
