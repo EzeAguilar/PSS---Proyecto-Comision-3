@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 import Header from "../components/ui/header";
-import Sidebar from "../components/ui/sideBar";
+import Sidebar from "./sideBarDoctor";
 
 interface LayoutProps {
   children: ReactNode;
@@ -10,7 +10,7 @@ const Layout: React.FC<LayoutProps> = ({ children }: LayoutProps) => {
     <div>
       <Header />
       <Sidebar />
-      <main className="md:ml-64 p-8">
+      <main className="ml-64 p-8">
         {children}
       </main>
     </div>
