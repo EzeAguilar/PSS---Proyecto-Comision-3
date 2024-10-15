@@ -5,6 +5,10 @@ import {Patient} from "@/app/lib/utils";
 import { useRouter } from "next/navigation";
 import {useEffect, useState} from "react";
 import {deletePatient, fetchAllDoctorPatients} from "@/app/lib/data";
+import { useParams } from "next/navigation";
+
+
+
 
 const PatientsPage = () => {
   useRouter();
@@ -12,12 +16,14 @@ const PatientsPage = () => {
   const [showConfirmMessage, setShowConfirmMessage] = useState(false);
   const [selectedPatientId] = useState<number | null>(null);
   const [showDisabled] = useState(false);
+  const params = useParams()
+  const id = parseInt(params.id as string, 10);
 
-  //TODO agregar solo los pacientes del doctor actual
+
   useEffect(() => {
     const loadPatients = async () => {
-      //TODO cambiar el id con el del actual logeado
-      const allPatients = await fetchAllDoctorPatients(1);
+      
+      const allPatients = await fetchAllDoctorPatients(id);
       console.log("Datos de todos los pacientes:", allPatients);
       setFilteredPatients(allPatients.filter(patient => patient.deshabilitado === showDisabled));
       console.log(allPatients[0].apellido);

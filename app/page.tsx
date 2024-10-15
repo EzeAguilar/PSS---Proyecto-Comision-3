@@ -23,13 +23,14 @@ export default function Component() {
         const mail = formData.get("email") as string;
         const password = formData.get("password") as string;
         const response = await doCredentialLogin(mail, password);
-        
+   
         
           
       if (response) {
         console.log("slkfhsdf");
         if ('numero_matricula' in response) {
-            router.push("doctor");
+            const id = response.id_medico;
+            router.push(`/doctor/${id}`);
         } else if ('fecha_creacion' in response) {
           console.log("admin");
             router.push("admin");
