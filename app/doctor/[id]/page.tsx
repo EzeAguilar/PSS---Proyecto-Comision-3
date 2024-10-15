@@ -4,21 +4,15 @@ import { Button } from "@/app/components/ui/button";
 import {Patient} from "@/app/lib/utils";
 import { useRouter } from "next/navigation";
 import {useEffect, useState} from "react";
-import {deletePatient, fetchAllDoctorPatients} from "@/app/lib/data";
+import {fetchAllDoctorPatients} from "@/app/lib/data";
 import { useParams } from "next/navigation";
 
-
-
-
 const PatientsPage = () => {
-  useRouter();
+  const router = useRouter();
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
-  const [showConfirmMessage, setShowConfirmMessage] = useState(false);
-  const [selectedPatientId] = useState<number | null>(null);
   const [showDisabled] = useState(false);
   const params = useParams()
   const id = parseInt(params.id as string, 10);
-
 
   useEffect(() => {
     const loadPatients = async () => {
@@ -31,15 +25,9 @@ const PatientsPage = () => {
     loadPatients();
   }, [showDisabled, id]);
 
-  const handleDeletePatient = async () => {
-    if (selectedPatientId !== null) {
-      await deletePatient(selectedPatientId);
-      setFilteredPatients((prevPatients) => 
-         prevPatients.filter(patient => patient.id_paciente !== selectedPatientId)
-      );
-      setShowConfirmMessage(false); 
-    }
-  };
+    const getInformationPatient = (patient: Patient) => {
+        router.push(`/doctor/${id}/patient-information/${patient.id_paciente}`);
+    };
 
   return (
       <div className="p-4">
@@ -70,53 +58,36 @@ const PatientsPage = () => {
             </thead>
             <tbody>
               {filteredPatients.map((patient) => (
-                <tr key={patient.id_paciente}>
-                  <td className="px-4 py-2 border">{patient.nombre}</td>
-                  <td className="px-4 py-2 border">{patient.apellido}</td>
-                  <td className="px-4 py-2 border">{patient.dni}</td>
-                  <td className="px-4 py-2 border">{patient.domicilio}</td>
-                  <td className="px-4 py-2 border">{patient.telefono}</td>
-                  {!showDisabled && (
-                    <td className="px-4 py-2 flex border justify-center">
-                      <Button
-                          size="lg"
-                          variant="default"
-                          className=" text-xl bg-orange-500 text-white text-[1.3rem] h-12 flex rounded-lg" // Botón más ovalado
-                          //onClick={() => handleNavigation(PATH_OPTIONS.medicalRecord)}
-                      >
-                        Ver
-                      </Button>
-                    </td>
-                  )}
-                </tr>
+                  <tr
+                      key={patient.id_paciente}
+                      onClick={() => getInformationPatient(patient)}
+                      className="cursor-pointer"
+                  >
+                    <td className="px-4 py-2 border">{patient.nombre}</td>
+                    <td className="px-4 py-2 border">{patient.apellido}</td>
+                    <td className="px-4 py-2 border">{patient.dni}</td>
+                    <td className="px-4 py-2 border">{patient.domicilio}</td>
+                    <td className="px-4 py-2 border">{patient.telefono}</td>
+                    {!showDisabled && (
+                        <td className="px-4 py-2 border text-center">
+                          <Button
+                              size="lg"
+                              variant="default"
+                              className=" text-xl bg-orange-500 text-white text-[1.3rem]" // Botón más ovalado
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                //handleConfirm(patient.id_paciente);
+                              }}
+                          >
+                            Ver
+                          </Button>
+                        </td>
+                    )}
+                  </tr>
               ))}
             </tbody>
           </table>
         </div>
-
-        {showConfirmMessage && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
-          <div className="bg-gray-100 p-6 rounded-lg">
-            <p className="text-lg mb-4">¿Seguro que desea eliminar al paciente seleccionado?</p>
-            <div className="flex justify-end space-x-4">
-              <Button
-                variant="default"
-                className="bg-red-500 text-white px-4 py-2 rounded"
-                onClick={() => setShowConfirmMessage(false)} // Cierra el modal sin eliminar
-              >
-                Cancelar
-              </Button>
-              <Button
-                variant="default"
-                className="bg-black text-white px-4 py-2 rounded"
-                onClick={handleDeletePatient} // Confirma la eliminación
-              >
-                Confirmar
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
       </div>
   );
 };

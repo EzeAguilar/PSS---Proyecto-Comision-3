@@ -110,34 +110,43 @@ const DoctorsPage = () => {
           </thead>
           <tbody>
             {filteredDoctors.map((medico) => (
-              <tr key={medico.id_medico}>
-                <td className="px-4 py-2 border">{medico.nombre}</td>
-                <td className="px-4 py-2 border">{medico.apellido}</td>
-                <td className="px-4 py-2 border">{medico.dni}</td>
-                <td className="px-4 py-2 border">{medico.domicilio}</td>
-                <td className="px-4 py-2 border">{medico.telefono}</td>
-                <td className="px-4 py-2 border">{medico.deshabilitado ? "Sí" : "No"}</td>
-                {!showDisabled && (
-                    <td className="px-4 py-2 flex space-x-4">
-                      {/* Iconos de editar y eliminar al final de la fila */}
-                      <FaEdit
-                        className="text-black cursor-pointer"
-                        onClick={() => editDoctor(medico.id_medico)}
-                      />
-                      <FaTrash
-                        className="text-black cursor-pointer"
-                        onClick={() => handleConfirm(medico.id_medico)}
-                      />
-                    </td>
+                <tr
+                    key={medico.id_medico}
+                    onClick={() => handleNavigation(`/admin/doctor-information/${medico.id_medico}`)}
+                    className="cursor-pointer"
+                >
+                  <td className="px-4 py-2 border">{medico.nombre}</td>
+                  <td className="px-4 py-2 border">{medico.apellido}</td>
+                  <td className="px-4 py-2 border">{medico.dni}</td>
+                  <td className="px-4 py-2 border">{medico.domicilio}</td>
+                  <td className="px-4 py-2 border">{medico.telefono}</td>
+                  <td className="px-4 py-2 border">{medico.deshabilitado ? "Sí" : "No"}</td>
+                  {!showDisabled && (
+                      <td className="px-4 py-2 flex space-x-4">
+                        <FaEdit
+                            className="text-black cursor-pointer"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              editDoctor(medico.id_medico);
+                            }}
+                        />
+                        <FaTrash
+                            className="text-black cursor-pointer"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleConfirm(medico.id_medico)
+                            }}
+                        />
+                      </td>
                   )}
-              </tr>
+                </tr>
             ))}
           </tbody>
         </table>
       </div>
       {showConfirmMessage && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
-          <div className="bg-gray-100 p-6 rounded-lg">
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
+            <div className="bg-gray-100 p-6 rounded-lg">
             <p className="text-lg mb-4">¿Seguro que desea eliminar al médico seleccionado?</p>
             <div className="flex justify-end space-x-4">
               <Button

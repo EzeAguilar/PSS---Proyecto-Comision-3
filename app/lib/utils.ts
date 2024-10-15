@@ -6,6 +6,7 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
     patients = "/admin",
     editPatient = "/admin/edit-patient",
     doctors = "/admin/doctors",
+
     calendar = "/admin/calendar",
     newPatient = "/admin/new-patient",
     newDoctor = "new-doctor",

@@ -27,7 +27,7 @@ export default function Component() {
         const response = await doCredentialLogin(mail, password);
    
         
-          
+
       if (response) {
         console.log("slkfhsdf");
         if ('numero_matricula' in response) {

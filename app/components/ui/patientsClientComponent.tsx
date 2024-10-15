@@ -137,33 +137,43 @@ const PatientsPage = ({pacientes, pages}: {pacientes: Patient[], pages: number})
             </thead>
             <tbody>
               {filteredPatients.map((patient) => (
-                <tr key={patient.id_paciente}>
-                  <td className="px-4 py-2 border">{patient.nombre}</td>
-                  <td className="px-4 py-2 border">{patient.apellido}</td>
-                  <td className="px-4 py-2 border">{patient.dni}</td>
-                  <td className="px-4 py-2 border">{patient.domicilio}</td>
-                  <td className="px-4 py-2 border">{patient.telefono}</td>
-                  {!showDisabled && (
-                    <td className="px-4 py-2 flex space-x-4">
-                      {/* Iconos de editar y eliminar al final de la fila */}
-                      <FaEdit
-                        className="text-black cursor-pointer"
-                        onClick={() => editPatient(patient)}
-                      />
-                      <FaTrash
-                        className="text-black cursor-pointer"
-                        onClick={() => handleConfirm(patient.id_paciente)}
-                      />
-                    </td>
-                  )}
-                </tr>
+                  <tr
+                      key={patient.id_paciente}
+                      onClick={() => handleNavigation(`/admin/patient-information/${patient.id_paciente}`)}
+                      className="cursor-pointer"
+                  >
+                    <td className="px-4 py-2 border">{patient.nombre}</td>
+                    <td className="px-4 py-2 border">{patient.apellido}</td>
+                    <td className="px-4 py-2 border">{patient.dni}</td>
+                    <td className="px-4 py-2 border">{patient.domicilio}</td>
+                    <td className="px-4 py-2 border">{patient.telefono}</td>
+
+                    {!showDisabled && (
+                        <td className="px-4 py-2 flex space-x-4">
+                          <FaEdit
+                              className="text-black cursor-pointer"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                editPatient(patient);
+                              }}
+                          />
+                          <FaTrash
+                              className="text-black cursor-pointer"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleConfirm(patient.id_paciente);
+                              }}
+                          />
+                        </td>
+                    )}
+                  </tr>
               ))}
             </tbody>
           </table>
         </div>
 
         <div className="mt-4 flex items-center justify-center">
-          <Pagination totalPages={pages} />
+          <Pagination totalPages={pages}/>
         </div>
 
         {showConfirmMessage && (
