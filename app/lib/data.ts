@@ -159,8 +159,7 @@ export async function fetchPatientPages(query: string): Promise<number> {
         FROM pacientes
         WHERE
           nombre ILIKE ${`%${query}%`} OR
-          apellido ILIKE ${`%${query}%`} OR
-          CAST(dni AS TEXT) ILIKE ${`%${query}%`}
+          apellido ILIKE ${`%${query}%`}
       `;
   
       const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
@@ -177,15 +176,14 @@ export async function fetchPatientPages(query: string): Promise<number> {
   ): Promise<Patient[]> {
     noStore();
     const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-  
+
     try {
       const patients = await sql<Patient>`
         SELECT *
         FROM pacientes
         WHERE
           nombre ILIKE ${`%${query}%`} OR
-          apellido ILIKE ${`%${query}%`} OR
-          CAST(dni AS TEXT) ILIKE ${`%${query}%`}
+          apellido ILIKE ${`%${query}%`}
         ORDER BY nombre DESC
         LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
       `;
