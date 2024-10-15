@@ -1,6 +1,6 @@
 "use client"; // Agregar esta línea al inicio del archivo
 
-import React, { useState } from 'react';
+import React from 'react';
 
 // Componente para crear el calendario
 const Page = () => {
