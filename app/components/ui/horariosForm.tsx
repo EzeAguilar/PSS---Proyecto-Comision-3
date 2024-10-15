@@ -12,23 +12,38 @@ interface HorarioFormProps {
 
 const HorarioForm = ({ horariosIniciales, onConfirm, onCancel }: HorarioFormProps) => {
   
-  const [horarios, setHorarios] = useState<Horario[]>(
-    horariosIniciales 
-      ? horariosIniciales.map(horario => ({
-          ...horario,
-          activo: Boolean(horario.inicio && horario.fin)
-        }))
-      : diasSemana.map(dia => ({ dia: dia.dia, inicio: "", fin: "", activo: false }))
-  );
+  const [horarios, setHorarios] = useState<Horario[]>(() => {
+    // Definir horarios iniciales con los días de la semana
+    const horariosBase = diasSemana.map(dia => ({
+      dia: dia.dia,
+      inicio: "",
+      fin: "",
+      activo: false,
+    }));
+  
+    // Si existen horarios iniciales, actualizarlos en base a los días de la semana
+    if (horariosIniciales) {
+      return horariosBase.map(horarioBase => {
+        const horarioInicial = horariosIniciales.find(horario => horario.dia === horarioBase.dia);
+        return horarioInicial
+          ? { 
+              ...horarioBase, 
+              inicio: horarioInicial.inicio, 
+              fin: horarioInicial.fin, 
+              activo: Boolean(horarioInicial.inicio && horarioInicial.fin) 
+            }
+          : horarioBase;
+      });
+    }
+  
+    // Retornar horarios basados en los días de la semana si no hay horarios iniciales
+    return horariosBase;
+  });
+  
 
   useEffect(() => {
-    if (horariosIniciales) {
-      setHorarios(horariosIniciales.map(horario => ({
-        ...horario,
-        activo: Boolean(horario.inicio && horario.fin)
-      })));
-    }
-  }, [horariosIniciales]);
+    console.log(horarios);
+  }, [horarios]);
   
   const handleCheckboxChange = (index: number, value: boolean) => {
     const nuevosHorarios = [...horarios];
@@ -57,7 +72,7 @@ const HorarioForm = ({ horariosIniciales, onConfirm, onCancel }: HorarioFormProp
                 if (horario.fin <= horario.inicio) {
                     error = true;
                 } else {
-                    horariosValidos.push({ ...horario, dia: diasSemana[index].dia });
+                    horariosValidos.push(horario);
                 }
             }
         }
