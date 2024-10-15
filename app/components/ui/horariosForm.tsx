@@ -64,7 +64,7 @@ const HorarioForm = ({ horariosIniciales, onConfirm, onCancel }: HorarioFormProp
   const handleConfirm = () => {
     const horariosValidos: Horario[] = [];
     let error = false;
-    horarios.forEach((horario, index) => {
+    horarios.forEach((horario) => {
         if (horario?.activo && !error) {
             if ((horario.inicio && !horario.fin) || (!horario.inicio && horario.fin)){
                 error = true;
