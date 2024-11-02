@@ -62,6 +62,12 @@ export type Horario = {
   activo: boolean;
 };
 
+export type Cita = {
+    fecha: string;
+    inicio: string;
+    deshabilitado: boolean;
+}
+
 export const diasSemana = [
   { dia: 'L', nombre: 'Lunes' },
   { dia: 'Ma', nombre: 'Martes' },
