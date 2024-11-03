@@ -413,3 +413,17 @@ export async function fechCitasDoctor(id: number): Promise<Cita[]> {
     `;
     return result.rows;
 }
+
+export async function fetchDoctorsWithCitasForDate(date: Date): Promise<Doctor[]> {
+    // Formatear la fecha a YYYY-MM-DD para la consulta SQL
+    const formattedDate = date.toISOString().split('T')[0];
+
+    const result = await sql<Doctor>`
+    SELECT DISTINCT m.*
+    FROM medicos m
+    JOIN citas c ON m.ID_Medico = c.ID_Medico
+    WHERE c.fecha = ${formattedDate}
+    `;
+
+    return result.rows;
+}

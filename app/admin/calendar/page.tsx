@@ -1,8 +1,8 @@
 "use client"; // Agregar esta línea al inicio del archivo
 
 import React, { useEffect, useState } from 'react';
-import { fetchAllCitas } from "@/app/lib/data";
-import { Cita } from "@/app/lib/utils";
+import { fetchAllCitas, fetchDoctorsWithCitasForDate } from "@/app/lib/data";
+import { Cita, Doctor } from "@/app/lib/utils";
 
 const months = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -14,8 +14,13 @@ const daysOfWeek = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 const Page = () => {
     const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
     const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [showDisabled] = useState(false);
     const [filteredDates, setfilteredDates] = useState<Cita[]>([]);
+    const [allMedicos, setAllMedicos] = useState<Doctor[]>([]);
+    const [selectedMedico, setSelectedMedico] = useState<string>("");
+    const [showModal, setShowModal] = useState(false);
+    const [medicoCitas, setMedicoCitas] = useState<Cita[]>([]);
 
     useEffect(() => {
         const loadDates = async () => {
@@ -46,6 +51,50 @@ const Page = () => {
             }
         }
     };
+
+    const openModal = async (day: number) => {
+        const selectedDay = new Date(currentYear, currentMonth, day);
+        setSelectedDate(selectedDay);
+
+        const medicos = await fetchDoctorsWithCitasForDate(selectedDay); 
+        setAllMedicos(medicos);
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+        setSelectedMedico("");
+        setMedicoCitas([]);
+    };
+
+    const handleMedicoChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const medicoID = event.target.value;
+        setSelectedMedico(medicoID);
+     
+        console.log(filteredDates);
+    
+        const selectedDateString = selectedDate?.toDateString(); // Convierte la fecha seleccionada a un formato legible
+        console.log(selectedDateString);
+    
+        filteredDates.forEach(cita => {
+            console.log(cita.fecha); // Debes asegurarte de que esta sea la misma propiedad que estás usando para comparar
+            console.log(cita.id_medico); // Usar el nombre correcto, que es ID_Medico según tu tipo de Cita
+        });
+    
+        const citasForMedico = filteredDates.filter(
+            cita => 
+                cita.id_medico?.toString() === medicoID && 
+                new Date(cita.fecha).toDateString() === selectedDateString // Usar toDateString para asegurar la comparación correcta
+        );
+    
+        setMedicoCitas(citasForMedico);
+        console.log(citasForMedico); // Muestra las citas filtradas, no medicoCitas porque setMedicoCitas es asíncrono
+    };
+    
+
+    useEffect(() => {
+        console.log("Medico seleccionado actualizado:", selectedMedico);
+    }, [selectedMedico]);
 
     const renderCalendar = () => {
         const daysInMonth = getDaysInMonth(currentMonth, currentYear);
@@ -98,6 +147,7 @@ const Page = () => {
                     className={`border h-24 flex items-center justify-center ${
                         isToday ? 'rounded-full bg-blue-100' : ''
                     } ${hasAppointment ? 'bg-red-300' : ''}`}
+                    onClick={() => hasAppointment && openModal(day)}
                 >
                     {isToday ? (
                         <div className="flex items-center justify-center">
@@ -151,6 +201,39 @@ const Page = () => {
                         ➔
                     </button>
                 </div>
+
+                {showModal && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                        <div className="bg-white p-6 rounded-lg">
+                            <label>Seleccione un médico: </label>
+                            <select value={selectedMedico} onChange={handleMedicoChange}>
+                                <option value="">Seleccione</option>
+                                {allMedicos.map(medico => (
+                                    <option key={medico.id_medico} value={medico.id_medico}>
+                                        {medico.nombre} {medico.apellido}
+                                    </option>
+                                ))}
+                            </select>
+
+                            {selectedMedico && (
+                                medicoCitas.length > 0 ? (
+                                    medicoCitas.map(cita => (
+                                        <div key={cita.id_paciente} className="mt-4">
+                                            <p>Paciente: {cita.id_paciente}</p>
+                                            <p>Horario: {cita.inicio}</p>
+                                            <button className="bg-red-500 text-white px-2 py-1 mr-2">Cancelar</button>
+                                            <button className="bg-black text-white px-2 py-1">Editar</button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="mt-4">No hay turnos para el médico seleccionado.</p>
+                                )
+                            )}
+                            <button onClick={closeModal} className="bg-black text-white px-4 py-2 mt-4">Cerrar</button>
+                        </div>
+                    </div>
+                )}
+
             </div>
         </div>
     );
