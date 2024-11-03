@@ -53,6 +53,16 @@ const Sidebar = () => {
               Calendario
             </Button>
           </li>
+          <li>
+            <Button
+              size="lg"
+              variant="link"
+              className={getButtonClassName(PATH_OPTIONS.nuevaCita)}
+              onClick={() => handleNavigation(PATH_OPTIONS.nuevaCita)}
+            >
+              Nueva Cita
+            </Button>
+          </li>
         </ul>
       </nav>
     </aside>
