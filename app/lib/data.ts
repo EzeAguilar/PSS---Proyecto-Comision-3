@@ -374,9 +374,34 @@ export async function createCita(cita: Cita) {
     return result.rows.length === 0;
   }
 
+  export async function verifyAndChangePassword(id: number, currentPass: string, newPass: string): Promise<boolean> {
+    
+    const doctor = await sql`
+      SELECT contraseña FROM medicos WHERE id_medico = ${id}
+    `;
+    
+    if (doctor.rows.length === 0) {
+      throw new Error('Doctor not found');
+    }
+  
+    const isMatch = await bcrypt.compare(currentPass, doctor.rows[0].contraseña);
+    if (!isMatch) {
+      throw new Error('Error en contraseña actual');
+    }
+  
+    const hashedNewPass = await bcrypt.hash(newPass, 10);
+    await sql`
+      UPDATE medicos
+      SET contraseña = ${hashedNewPass}
+      WHERE id_medico = ${id}
+    `;
+  
+    return true;
+  }
+
 export async function searchDoctors(query: string): Promise<Doctor[]> {
     noStore();
-    const searchQuery = `%${query}%`; // Para buscar coincidencias parciales
+    const searchQuery = `%${query}%`; 
 
 
     const result = await sql<Doctor>`

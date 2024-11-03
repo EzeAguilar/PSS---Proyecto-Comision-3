@@ -1,5 +1,6 @@
 'use client'
-
+import { IconButton } from "@mui/material";
+import SettingsIcon from '@mui/icons-material/Settings';
 import { Button } from "@/app/components/ui/button";
 import {Patient} from "@/app/lib/utils";
 import { useRouter } from "next/navigation";
@@ -28,6 +29,10 @@ const PatientsPage = () => {
     const getInformationPatient = (patient: Patient) => {
         router.push(`/doctor/${id}/patient-information/${patient.id_paciente}`);
     };
+
+  const handleSettingsClick = () => {
+    router.push(`/doctor/${id}/configuracion`);
+  }
 
   return (
       <div className="p-4">
@@ -88,6 +93,12 @@ const PatientsPage = () => {
             </tbody>
           </table>
         </div>
+        <IconButton 
+        onClick={handleSettingsClick}
+        className="absolute bottom-4 left-12"
+      >
+        <SettingsIcon />
+      </IconButton>      <main className="ml-64 p-8"></main>
       </div>
   );
 };

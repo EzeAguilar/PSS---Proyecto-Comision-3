@@ -70,6 +70,7 @@ export default function AdminAppointmentScheduling() {
 
     try {
       const dateStr = selectedDate.toISOString().split('T')[0]
+      if (!selectedDoctor.id_medico) return;
       const isAvailable = await checkCitaAvailability(dateStr, selectedTime, selectedDoctor.id_medico)
 
       if (!isAvailable) {
@@ -77,6 +78,8 @@ export default function AdminAppointmentScheduling() {
         setShowAlertDialog(true)
         return
       }
+
+      if (!selectedPatient.id_paciente || !selectedDoctor.id_medico) return;
 
       const newCita: Cita = {
         id_paciente: selectedPatient.id_paciente,
@@ -194,7 +197,7 @@ export default function AdminAppointmentScheduling() {
       <h1 className="text-2xl font-bold mb-4">Nueva Cita</h1>
       <div className="grid grid-cols-2 gap-4 mb-4">
         <Select onValueChange={(value) => {
-          setSelectedPatient(patients.find(p => p.id_paciente.toString() === value) || null)
+          setSelectedPatient(patients.find(p => p.id_paciente !== undefined && p.id_paciente.toString() === value) || null)
           setIsDirty(true)
         }}>
           <SelectTrigger className="bg-white">
@@ -202,14 +205,14 @@ export default function AdminAppointmentScheduling() {
           </SelectTrigger>
           <SelectContent className='bg-gray-200 text-black'>
             {patients.map((patient) => (
-              <SelectItem key={patient.id_paciente} value={patient.id_paciente.toString()}>
+              <SelectItem key={patient.id_paciente ?? ''} value={(patient.id_paciente ?? '').toString()}>
                 {patient.nombre}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         <Select onValueChange={(value) => {
-          setSelectedDoctor(doctors.find(d => d.id_medico.toString() === value) || null)
+          setSelectedDoctor(doctors.find(d => d.id_medico?.toString() === value) || null)
           setIsDirty(true)
         }}>
           <SelectTrigger className="bg-white">
