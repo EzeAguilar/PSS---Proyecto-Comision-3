@@ -64,7 +64,10 @@ const DoctorInformationPage: React.FC<DoctorInformationPageProps> = ({ doctorDat
                 </div>
             </div>
             <div className="flex w-full justify-center">
-                <button className="md:max-w-[40%] p-5 sm:w-full bg-black text-white py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                <button
+                    className="md:max-w-[40%] p-5 sm:w-full bg-black text-white py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                    onClick={() => window.history.back()}
+                >
                     Volver
                 </button>
             </div>

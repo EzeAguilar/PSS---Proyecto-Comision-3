@@ -1,6 +1,6 @@
 "use server"
 import { sql } from "@vercel/postgres";
-import { Horario, Patient, admin } from "./utils";
+import {Horario, Patient, admin, Cita} from "./utils";
 import { Doctor } from "./utils";
 import { unstable_noStore as noStore } from 'next/cache';
 import bcrypt from 'bcrypt';
@@ -396,4 +396,20 @@ export async function editHorarios(idMedico: number | undefined, horarios: Horar
         VALUES (${idMedico}, ${horario.dia}, ${horario.inicio}, ${horario.fin}, false)
         `;
     });
+}
+
+export async function fetchAllCitas(): Promise<Cita[]> {
+    noStore();
+    const result = await sql<Cita>`
+    SELECT * FROM citas
+    `;
+    return result.rows;
+}
+
+export async function fechCitasDoctor(id: number): Promise<Cita[]> {
+    noStore();
+    const result = await sql<Cita>`
+    SELECT * FROM citas WHERE ID_Medico = ${id}
+    `;
+    return result.rows;
 }

@@ -6,6 +6,7 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
     patients = "/admin",
     editPatient = "/admin/edit-patient",
     doctors = "/admin/doctors",
+
     calendar = "/admin/calendar",
     newPatient = "/admin/new-patient",
     newDoctor = "new-doctor",
@@ -60,6 +61,12 @@ export type Horario = {
   fin: string;
   activo: boolean;
 };
+
+export type Cita = {
+    fecha: string;
+    inicio: string;
+    deshabilitado: boolean;
+}
 
 export const diasSemana = [
   { dia: 'L', nombre: 'Lunes' },

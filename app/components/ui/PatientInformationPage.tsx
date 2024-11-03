@@ -1,3 +1,5 @@
+"use client";
+
 import { Patient } from "@/app/lib/utils";
 import React from "react";
 
@@ -6,6 +8,7 @@ interface PatientInformationPageProps {
 }
 
 const PatientInformationPage: React.FC<PatientInformationPageProps> = ({ patientData }) => {
+
     return (
         <div className="sm:mr-0 sm:px-4 md:mr-[10%]">
             <h1 className="text-2xl font-bold mb-6 text-start sm:text-center">Información del paciente</h1>
@@ -37,7 +40,10 @@ const PatientInformationPage: React.FC<PatientInformationPageProps> = ({ patient
                     </div>
                 </div>
                 <div className="flex justify-center">
-                    <button className="w-[40%] sm:w-full bg-black text-white py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                    <button
+                        className="w-[40%] sm:w-full bg-black text-white py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                        onClick={() => window.history.back()}
+                    >
                         Volver
                     </button>
                 </div>
