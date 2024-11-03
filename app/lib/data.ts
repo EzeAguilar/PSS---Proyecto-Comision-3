@@ -413,3 +413,35 @@ export async function fechCitasDoctor(id: number): Promise<Cita[]> {
     `;
     return result.rows;
 }
+
+export async function fetchCitasPatient(id: number): Promise<Cita[]> {
+    noStore();
+    const result = await sql<Cita>`
+    SELECT * FROM citas WHERE ID_Paciente = ${id}
+    `;
+    return result.rows;
+}
+
+export async function cancelDate(fecha: string, id_paciente: number | undefined, id_medico: number | undefined): Promise<void> {
+    await sql`
+    UPDATE citas
+    SET deshabilitado = true
+    WHERE fecha = ${fecha} AND ID_Paciente = ${id_paciente} AND ID_Medico = ${id_medico}
+    `;
+}
+
+export async function deleteCita(fecha: string, id_paciente: number | undefined, id_medico: number | undefined): Promise<void> {
+    await sql`
+    UPDATE citas
+    SET deshabilitado = true
+    WHERE fecha = ${fecha} AND ID_Paciente = ${id_paciente} AND ID_Medico = ${id_medico}
+    `;
+}
+
+export async function findDoctorById(id: number | undefined): Promise<Doctor> {
+    noStore();
+    const result = await sql<Doctor>`
+    SELECT * FROM medicos WHERE id_medico = ${id}
+    `;
+    return result.rows[0];
+}
