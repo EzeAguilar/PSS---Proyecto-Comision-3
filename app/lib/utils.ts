@@ -68,6 +68,18 @@ export type Cita = {
     deshabilitado: boolean;
 }
 
+export type ficha_medica ={
+  id_ficha: number;
+  id_paciente: number;
+  id_medico: number;
+  alergias: string;
+  diagnosticos: string;
+  tratamientos: string;
+  ultima_modificacion: Date;
+  medicamentos: string;
+  deshabilitado: Boolean;  
+}
+
 export const diasSemana = [
   { dia: 'L', nombre: 'Lunes' },
   { dia: 'Ma', nombre: 'Martes' },

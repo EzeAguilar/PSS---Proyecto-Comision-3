@@ -1,7 +1,6 @@
 "use server"
 import { sql } from "@vercel/postgres";
-import {Horario, Patient, admin, Cita} from "./utils";
-import { Doctor } from "./utils";
+import {Doctor, Horario, Patient, admin, Cita, ficha_medica} from "./utils";
 import { unstable_noStore as noStore } from 'next/cache';
 import bcrypt from 'bcrypt';
 
@@ -413,3 +412,11 @@ export async function fechCitasDoctor(id: number): Promise<Cita[]> {
     `;
     return result.rows;
 }
+
+export async function fetchFichaMedica(id_paciente: number): Promise<ficha_medica> {
+    noStore();
+    const result = await sql<ficha_medica>`
+    SELECT * FROM ficha_medica WHERE id_ficha = ${id_paciente} and id_paciente = ${id_paciente}
+    `;
+    return result.rows[0];
+  }
