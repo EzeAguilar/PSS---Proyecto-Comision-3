@@ -29,16 +29,8 @@ const PatientsPage = () => {
         router.push(`/doctor/${id}/patient-information/${patient.id_paciente}`);
     };
     
-    
-    const [fichaMedica, setFichaMedica] = useState<ficha_medica | null>(null);
     const handleFetchFichaMedica = async (id_paciente: number) => {
-      try {
-        const ficha = await fetchFichaMedica(id_paciente);
-        setFichaMedica(ficha);
-        console.log("Ficha médica obtenida:", ficha);
-      } catch (error) {
-        console.error("Error al obtener la ficha médica:", error);
-      }
+        router.push(`/doctor/${id}/patient-medicalRecord/${id_paciente}`);
     };
 
   return (
@@ -87,7 +79,7 @@ const PatientsPage = () => {
                               variant="default"
                               className=" text-xl bg-orange-500 text-white text-[1.3rem]" // Botón más ovalado
                               onClick={(event) => {
-                                //event.stopPropagation();
+                                event.stopPropagation();
                                 //Poner botón que fetchee la ficha del paciente
                                 if (patient.id_paciente !== undefined) {
                                   handleFetchFichaMedica(patient.id_paciente);

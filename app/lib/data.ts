@@ -416,7 +416,7 @@ export async function fechCitasDoctor(id: number): Promise<Cita[]> {
 export async function fetchFichaMedica(id_paciente: number): Promise<ficha_medica> {
     noStore();
     const result = await sql<ficha_medica>`
-    SELECT * FROM ficha_medica WHERE id_ficha = ${id_paciente} and id_paciente = ${id_paciente}
+    SELECT * FROM ficha_medica WHERE id_ficha = ${id_paciente}
     `;
     return result.rows[0];
   }
