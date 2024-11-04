@@ -47,7 +47,7 @@ const SmallCalendar: React.FC<SmallCalendarProps> = ({
 
         while (currentTime < end) {
             slots.push(currentTime.toTimeString().slice(0, 5)); // Agrega el tiempo en formato HH:MM
-            currentTime.setMinutes(currentTime.getMinutes() + 30); // Incrementa en 30 minutos
+            currentTime.setMinutes(currentTime.getMinutes() + 20); // Incrementa en 30 minutos
         }
 
         return slots;
