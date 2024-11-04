@@ -112,32 +112,54 @@ const SmallCalendar: React.FC<SmallCalendarProps> = ({
 
     const handleDayClick = async (day: number) => {
         const selectedDate = new Date();
-        const weekDaysMap = ['D', 'L', 'Ma', 'Mi', 'J', 'V', 'S'];
         selectedDate.setDate(day);
 
-        // Obtener la programación del médico para el día seleccionado
+        // Verifica si el paciente ya tiene una cita programada en el día seleccionado
+        const hasAppointment = filteredDoctorDates.some(date => {
+            const appointmentDate = new Date(date.fecha);
+            return (
+                appointmentDate.getDate() === day &&
+                appointmentDate.getMonth() === selectedDate.getMonth() &&
+                appointmentDate.getFullYear() === selectedDate.getFullYear() &&
+                date.id_paciente === idPatient // Verifica que la cita sea para el paciente actual
+            );
+        });
+
+        if (hasAppointment) {
+            // Mostrar alerta si ya tiene una cita programada
+            await Swal.fire({
+                title: 'Cita ya programada',
+                text: 'Ya tiene una cita programada para este día. Seleccione otra fecha.',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return; // Detener la ejecución si ya tiene una cita
+        }
+
+        const weekDaysMap = ['D', 'L', 'Ma', 'Mi', 'J', 'V', 'S'];
         const doctorSchedule = filteredDoctorTimes.find(time => time.dia === weekDaysMap[selectedDate.getDay()]);
         if (!doctorSchedule) return;
 
-        // Generar los slots de tiempo del médico
         const timeSlots = generateTimeSlots(doctorSchedule.inicio, doctorSchedule.fin);
 
         const bookedSlots = filteredDoctorDates
             .filter(date => {
                 const d = new Date(date.fecha);
-                return d.getDate() === day && d.getMonth() === selectedDate.getMonth() && d.getFullYear() === selectedDate.getFullYear();
+                return (
+                    d.getDate() === day &&
+                    d.getMonth() === selectedDate.getMonth() &&
+                    d.getFullYear() === selectedDate.getFullYear()
+                );
             })
-            .map(date => date.inicio.slice(0, 5)); // Retornar solo la parte de hh:mm (los primeros 5 caracteres)
+            .map(date => date.inicio.slice(0, 5));
 
-        // Crear contenedor para los horarios
         const timeOptionsContainer = document.createElement('div');
         timeOptionsContainer.style.maxHeight = '200px';
         timeOptionsContainer.style.overflowY = 'auto';
         timeOptionsContainer.style.textAlign = 'left';
 
-        // Crear botones para cada horario disponible
         timeSlots.forEach(slot => {
-            if (!bookedSlots.includes(slot)) { // Solo mostrar horarios no ocupados
+            if (!bookedSlots.includes(slot)) {
                 const button = document.createElement('button');
                 button.type = 'button';
                 button.style.display = 'block';
@@ -152,15 +174,12 @@ const SmallCalendar: React.FC<SmallCalendarProps> = ({
                 button.style.marginTop = '4px';
                 button.innerText = slot;
 
-                // Añadir evento onclick al botón
                 button.onclick = () => confirmTime(slot, selectedDate.toISOString().split('T')[0], doctorID, idPatient, day);
 
-                // Añadir el botón al contenedor
                 timeOptionsContainer.appendChild(button);
             }
         });
 
-        // Mostrar el modal de SweetAlert
         await Swal.fire({
             title: `Seleccione un horario para su turno:`,
             html: timeOptionsContainer,
@@ -169,8 +188,6 @@ const SmallCalendar: React.FC<SmallCalendarProps> = ({
             cancelButtonText: 'Cancelar'
         });
     };
-
-
 
 // Función para confirmar la reserva
     const confirmTime = async (selectedTime: string, selectedDate: string, doctorID: number | undefined, idPatient: number | undefined, day: number) => {
