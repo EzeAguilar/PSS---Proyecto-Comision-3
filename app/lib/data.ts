@@ -432,8 +432,7 @@ export async function cancelDate(fecha: string, id_paciente: number | undefined,
 
 export async function deleteCita(fecha: string, id_paciente: number | undefined, id_medico: number | undefined): Promise<void> {
     await sql`
-    UPDATE citas
-    SET deshabilitado = true
+    DELETE FROM citas
     WHERE fecha = ${fecha} AND ID_Paciente = ${id_paciente} AND ID_Medico = ${id_medico}
     `;
 }

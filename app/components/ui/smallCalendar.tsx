@@ -116,6 +116,7 @@ const SmallCalendar: React.FC<SmallCalendarProps> = ({
 
         // Verifica si el paciente ya tiene una cita programada en el día seleccionado
         const hasAppointment = filteredDoctorDates.some(date => {
+            console.log(date);
             const appointmentDate = new Date(date.fecha);
             return (
                 appointmentDate.getDate() === day &&
@@ -199,7 +200,6 @@ const SmallCalendar: React.FC<SmallCalendarProps> = ({
         });
 
         if (confirmResult.isConfirmed) {
-            // Insertar la fecha en la base de datos
             const newDate: Cita = {
                 fecha: `${selectedDate} ${selectedTime}`,
                 id_medico: doctorID,

@@ -2,17 +2,17 @@
 
 import Swal from 'sweetalert2';
 import { useEffect, useState } from "react";
-import { cancelDate, fetchCitasPatient, findDoctorById } from "@/app/lib/data";
+import { deleteCita, fetchCitasPatient, findDoctorById} from "@/app/lib/data";
 import { useParams } from "next/navigation";
 import { Cita } from "@/app/lib/utils";
 
 const PatientsPage = () => {
     const params = useParams();
     const id = parseInt(params.id as string, 10);
-    const [showDisabled] = useState(true);
+    const [showDisabled] = useState(false);
     const [filteredPatientDates, setFilteredPatientDates] = useState<Cita[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 2;
+    const itemsPerPage = 6;
     const [doctorMap, setDoctorMap] = useState<{ [key: number]: string }>({});
 
     useEffect(() => {
@@ -41,7 +41,6 @@ const PatientsPage = () => {
         const doctors = await Promise.all(doctorPromises);
         const validDoctors = doctors.filter((doctor) => doctor !== null) as { id: number, name: string }[];
 
-        // Creamos un mapa de doctores para acceder fácilmente por ID
         const doctorMap = Object.fromEntries(validDoctors.map(doctor => [doctor.id, doctor.name]));
         setDoctorMap(doctorMap);
     };
@@ -70,6 +69,9 @@ const PatientsPage = () => {
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredPatientDates.slice(indexOfFirstItem, indexOfLastItem);
 
+    console.log(doctorMap);
+    console.log(filteredPatientDates);
+
     const handleCancelAppointment = async (fecha: string, id_paciente: number | undefined, id_medico: number | undefined) => {
         const date = new Date(fecha);
         const formattedDate = date.toLocaleDateString('es-AR', { day: 'numeric', month: 'numeric' });
@@ -88,7 +90,7 @@ const PatientsPage = () => {
         });
 
         if (result.isConfirmed) {
-            await cancelDate(fecha, id_paciente, id_medico); // Espera a que se complete la cancelación
+            await deleteCita(fecha, id_paciente, id_medico); // Espera a que se complete la cancelación
             loadPatientDates(); // Recarga las citas
             Swal.fire(
                 'Cancelada!',
