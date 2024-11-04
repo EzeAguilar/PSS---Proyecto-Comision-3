@@ -1,5 +1,6 @@
 'use client';
 
+import Swal from 'sweetalert2';
 import { useEffect, useState } from "react";
 import { cancelDate, fetchCitasPatient, findDoctorById } from "@/app/lib/data";
 import { useParams } from "next/navigation";
@@ -8,7 +9,7 @@ import { Cita } from "@/app/lib/utils";
 const PatientsPage = () => {
     const params = useParams();
     const id = parseInt(params.id as string, 10);
-    const [showDisabled] = useState(false);
+    const [showDisabled] = useState(true);
     const [filteredPatientDates, setFilteredPatientDates] = useState<Cita[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 2;
@@ -70,10 +71,30 @@ const PatientsPage = () => {
     const currentItems = filteredPatientDates.slice(indexOfFirstItem, indexOfLastItem);
 
     const handleCancelAppointment = async (fecha: string, id_paciente: number | undefined, id_medico: number | undefined) => {
-        const confirmCancel = window.confirm("¿Estás seguro de que deseas cancelar esta cita?");
-        if (confirmCancel) {
+        const date = new Date(fecha);
+        const formattedDate = date.toLocaleDateString('es-AR', { day: 'numeric', month: 'numeric' });
+        const formattedTime = date.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+        const doctorName = id_medico !== undefined ? doctorMap[id_medico] : "Médico no encontrado";
+
+        // Configuración de SweetAlert
+        const result = await Swal.fire({
+            text: `¿Deseas cancelar la cita del ${formattedDate} a las ${formattedTime} hs con ${doctorName}?`,
+            showCancelButton: true,
+            confirmButtonColor: 'red',
+            cancelButtonColor: 'black',
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Volver'
+        });
+
+        if (result.isConfirmed) {
             await cancelDate(fecha, id_paciente, id_medico); // Espera a que se complete la cancelación
             loadPatientDates(); // Recarga las citas
+            Swal.fire(
+                'Cancelada!',
+                'La cita ha sido cancelada.',
+                'success'
+            );
         }
     };
 
@@ -110,7 +131,7 @@ const PatientsPage = () => {
                     <button
                         key={index + 1}
                         onClick={() => setCurrentPage(index + 1)}
-                        className={`px-3 py-1 mx-1 rounded ${currentPage === index + 1 ? 'bg-black text-white' : 'bg-gray-200 text-black'}`}
+                        className={`px-3 py-1 mx-1 rounded ${currentPage === index + 1 ? 'bg-white text-black border border-black' : 'bg-gray-200 text-black'}`}
                     >
                         {index + 1}
                     </button>

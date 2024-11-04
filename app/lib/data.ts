@@ -406,7 +406,7 @@ export async function fetchAllCitas(): Promise<Cita[]> {
     return result.rows;
 }
 
-export async function fechCitasDoctor(id: number): Promise<Cita[]> {
+export async function fechCitasDoctor(id: number | undefined): Promise<Cita[]> {
     noStore();
     const result = await sql<Cita>`
     SELECT * FROM citas WHERE ID_Medico = ${id}
@@ -438,6 +438,14 @@ export async function deleteCita(fecha: string, id_paciente: number | undefined,
     `;
 }
 
+export async function fetchAllPatientDoctors(id: number): Promise<Doctor[]> {
+    noStore();
+    const result = await sql<Doctor>`
+    SELECT * FROM medicos WHERE id_medico IN (SELECT id_medico FROM es_paciente_de WHERE id_paciente = ${id})
+    `;
+    return result.rows;
+}
+
 export async function findDoctorById(id: number | undefined): Promise<Doctor> {
     noStore();
     const result = await sql<Doctor>`
@@ -445,3 +453,26 @@ export async function findDoctorById(id: number | undefined): Promise<Doctor> {
     `;
     return result.rows[0];
 }
+
+export async function fetchAllDoctorTimes(id: number | undefined): Promise<Horario[]> {
+    noStore();
+    const result = await sql<Horario>`
+    SELECT * FROM horarios WHERE id_medico = ${id}
+    `;
+    return result.rows;
+}
+
+export async function insertPatientDate(cita: {
+    fecha: string;
+    id_medico: number | undefined;
+    deshabilitado: boolean;
+    inicio: string | null;
+    id_paciente: number | undefined
+}): Promise<void> {
+    await sql`
+    INSERT INTO citas (fecha, ID_Medico, ID_Paciente, inicio, deshabilitado)
+    VALUES (${cita.fecha}, ${cita.id_medico}, ${cita.id_paciente}, ${cita.inicio}, ${cita.deshabilitado})
+    `;
+}
+
+
