@@ -59,7 +59,7 @@ export type Horario = {
   dia: string;
   inicio: string;
   fin: string;
-  activo: boolean;
+  deshabilitado: boolean;
 };
 
 export type Cita = {
