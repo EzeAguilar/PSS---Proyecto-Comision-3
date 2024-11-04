@@ -9,7 +9,7 @@ import SmallCalendar from "@/app/components/ui/smallCalendar";
 const Page = () => {
     const params = useParams();
     const id = parseInt(params.id as string, 10);
-    const [showDisabled] = useState(true);
+    const [showDisabled] = useState(false);
     const [filteredPatientDoctors, setFilteredPatientDoctors] = useState<Doctor[]>([]);
     const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
