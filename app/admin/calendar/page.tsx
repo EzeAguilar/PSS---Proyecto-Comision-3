@@ -122,7 +122,7 @@ const Page = () => {
     };
 
     const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNuevaCita({ ...nuevaCita!!, fecha: e.target.value });
+        setNuevaCita(nuevaCita ? { ...nuevaCita, fecha: e.target.value } : null);
         const fecha = new Date(e.target.value);
         const diasSemana = ['D', 'L', 'Ma', 'Mi', 'J', 'V', 'S'];
         const diaSeleccionado = diasSemana[fecha.getUTCDay()]; // Obtener el día como abreviación
@@ -172,11 +172,13 @@ const Page = () => {
 
     const saveEditCita = async () => {
         try {
-            await editCita(
-                nuevaCita!!,
-                selectedCita!!.fecha,
-                selectedCita!!.id_paciente
-            );
+            if (nuevaCita && selectedCita?.fecha && selectedCita?.id_paciente) {
+                await editCita(
+                    nuevaCita,
+                    selectedCita.fecha,
+                    selectedCita.id_paciente
+                );
+            }
 
             const allDates = await fetchAllCitas();
             setfilteredDates(allDates.filter(date => date.deshabilitado === showDisabled));

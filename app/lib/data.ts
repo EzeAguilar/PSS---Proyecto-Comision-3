@@ -2,9 +2,8 @@
 import { sql } from "@vercel/postgres";
 import {Horario, Patient, admin, Cita} from "./utils";
 import { Doctor } from "./utils";
-import { unstable_noStore as noStore, revalidatePath } from 'next/cache';
+import { unstable_noStore as noStore} from 'next/cache';
 import bcrypt from 'bcrypt';
-import { redirect } from "next/navigation";
 
 
 export async function doCredentialLogin(mail: string, pass: string): Promise<Doctor | Patient | admin | null> {
