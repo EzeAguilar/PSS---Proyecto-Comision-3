@@ -37,7 +37,8 @@ export default function Component() {
           console.log("admin");
             router.push("admin");
         } else {
-            router.push("patient");
+          const id = response.id_paciente;
+            router.push(`patient/${id}`);
         }
       }
       if (!response) {

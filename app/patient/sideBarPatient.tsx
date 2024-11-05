@@ -3,6 +3,8 @@ import {useParams, useRouter} from "next/navigation";
 import { PATH_OPTIONS } from "@/app/lib/utils";
 import { useState } from "react";
 import { Button } from "../components/ui/button";
+import { IconButton } from "@mui/material";
+import { SettingsIcon } from "lucide-react";
 
 const Sidebar = () => {
   const router = useRouter();
@@ -11,6 +13,9 @@ const Sidebar = () => {
 
   const [activePath, setActivePath] = useState<string | null>(null);
 
+  const handleSettingsClick = () => {
+    router.push(`/patient/${id}/configuracion`);
+  }
   const handleNavigation = (path: string) => {
     setActivePath(path);
     if (path === PATH_OPTIONS.appointments) {
@@ -65,6 +70,9 @@ const Sidebar = () => {
             </Button>
           </li>
         </ul>
+        <IconButton onClick={handleSettingsClick} className='top-72 left-4'>
+                <SettingsIcon />
+            </IconButton>     
       </nav>
     </aside>
   );
