@@ -1,10 +1,10 @@
 'use client'
 
 import { Button } from "@/app/components/ui/button";
-import {ficha_medica, Patient} from "@/app/lib/utils";
+import { Patient } from "@/app/lib/utils";
 import { useRouter } from "next/navigation";
-import {useEffect, useState} from "react";
-import {fetchAllDoctorPatients, fetchFichaMedica} from "@/app/lib/data";
+import { useEffect, useState} from "react";
+import { fetchAllDoctorPatients, fetchFichaMedica} from "@/app/lib/data";
 import { useParams } from "next/navigation";
 
 

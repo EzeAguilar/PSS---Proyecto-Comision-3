@@ -77,7 +77,7 @@ export type ficha_medica ={
   tratamientos: string;
   ultima_modificacion: Date;
   medicamentos: string;
-  deshabilitado: Boolean;  
+  deshabilitado: boolean;  
 }
 
 export const diasSemana = [

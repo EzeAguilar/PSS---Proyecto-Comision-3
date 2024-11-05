@@ -124,7 +124,6 @@ const PatientMedicalRecordPage: React.FC<PatientMedicalRecordPageProps> = ({ pat
                 {!isEditing && (
                     <button
                         className="bg-red-500 text-white py-2 px-4 rounded-lg"
-                        //disabled={!!patientMedicalRecord.deshabilitado}
                         onClick={() => {
                             setShowConfirmation(true);
                         }}
