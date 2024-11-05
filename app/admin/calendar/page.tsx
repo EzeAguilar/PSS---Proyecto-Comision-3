@@ -354,8 +354,8 @@ const Page = () => {
                             {/* Selector de paciente */}
                             <label>Paciente: </label>
                             <select
-                                value={nuevaCita!!.id_paciente}
-                                onChange={(e) => setNuevaCita({ ...nuevaCita!!, id_paciente: Number(e.target.value) })}
+                                value={nuevaCita?.id_paciente || ''}
+                                onChange={(e) => setNuevaCita(nuevaCita ? { ...nuevaCita, id_paciente: Number(e.target.value) } : null)}
                             >
                                 {pacientes.map((paciente) => (
                                     <option key={paciente.id_paciente} value={paciente.id_paciente}>
@@ -367,14 +367,14 @@ const Page = () => {
                             <label>Fecha: </label>
                                 <input
                                     type="date"
-                                    value={nuevaCita!!.fecha}
+                                    value={nuevaCita?.fecha || ''}
                                     onChange={(e) => handleDateChange(e)}
                                 />
 
                             <label>Horario: </label>
                                 <select
                                     value={nuevaCita?.inicio}
-                                    onChange={(e) => setNuevaCita({ ...nuevaCita!, inicio: e.target.value })}
+                                    onChange={(e) => setNuevaCita(nuevaCita ? {...nuevaCita , inicio: e.target.value }: null)}
                                 >
                                 <option value="">Seleccione un horario</option>
                                     {!mensajeError && (
