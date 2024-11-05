@@ -1,59 +1,68 @@
 'use client'
-
+import { IconButton } from "@mui/material";
+import SettingsIcon from '@mui/icons-material/Settings';
 import { Button } from "@/app/components/ui/button";
-import {Patient} from "@/app/lib/utils";
+import { Patient } from "@/app/lib/utils";
 import { useRouter } from "next/navigation";
-import {useEffect, useState} from "react";
-import {deletePatient, fetchAllDoctorPatients} from "@/app/lib/data";
+import { useEffect, useState} from "react";
+import { fetchAllDoctorPatients, fetchFichaMedica} from "@/app/lib/data";
 import { useParams } from "next/navigation";
 
 
-
+interface PatientWithFichaStatus extends Patient {
+  hasFichaMedica: boolean;
+}
 
 const PatientsPage = () => {
-  useRouter();
-  const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
-  const [showConfirmMessage, setShowConfirmMessage] = useState(false);
-  const [selectedPatientId] = useState<number | null>(null);
+  const router = useRouter();
+  const [filteredPatients, setFilteredPatients] = useState<PatientWithFichaStatus[]>([]);
   const [showDisabled] = useState(false);
   const params = useParams()
   const id = parseInt(params.id as string, 10);
-
 
   useEffect(() => {
     const loadPatients = async () => {
       
       const allPatients = await fetchAllDoctorPatients(id);
-      console.log("Datos de todos los pacientes:", allPatients);
-      setFilteredPatients(allPatients.filter(patient => patient.deshabilitado === showDisabled));
-      console.log(allPatients[0].apellido);
+
+      const patientsWithFichaStatus = await Promise.all(
+        allPatients.map(async (patient) => {
+          if (!patient.id_paciente) {
+            console.log("Error: Paciente sin ID");
+            return patient;
+          }
+      
+          const fichaMedica = await fetchFichaMedica(patient.id_paciente);
+          return {
+            ...patient,
+            hasFichaMedica: !!fichaMedica && !fichaMedica.deshabilitado, // false if ficha_medica doesn't exist or if fichaMedica.deshabilitado is true
+          };
+        })
+      );
+      
+
+      setFilteredPatients(patientsWithFichaStatus.filter((patient): patient is PatientWithFichaStatus => patient.deshabilitado === showDisabled));
+      console.log(patientsWithFichaStatus[0].apellido);
     };
     loadPatients();
-  }, [showDisabled]);
+  }, [showDisabled, id]);
 
-  const handleDeletePatient = async () => {
-    if (selectedPatientId !== null) {
-      await deletePatient(selectedPatientId);
-      setFilteredPatients((prevPatients) => 
-         prevPatients.filter(patient => patient.id_paciente !== selectedPatientId)
-      );
-      setShowConfirmMessage(false); 
-    }
-  };
+    const getInformationPatient = (patient: Patient) => {
+        router.push(`/doctor/${id}/patient-information/${patient.id_paciente}`);
+    };
+    
+    const handleFetchFichaMedica = async (id_paciente: number) => {
+        router.push(`/doctor/${id}/patient-medicalRecord/${id_paciente}`);
+    };
+
+  const handleSettingsClick = () => {
+    router.push(`/doctor/${id}/configuracion`);
+  }
 
   return (
       <div className="p-4">
         <div className="flex items-center mb-4">
           <h1 className="text-3xl mr-44">Pacientes</h1> {/* Espacio a la derecha */}
-
-          <Button
-              size="lg"
-              variant="default"
-              className=" absolute right-0 mr-44 bg-red-500 text-white text-[1.3rem] px-10 h-12 flex items-center rounded-lg" // Botón más ovalado
-              //onClick={() => handleNavigation(PATH_OPTIONS.doctorNewPatient)}
-          >
-            Agregar
-          </Button>
         </div>
 
         <div className="overflow-x-auto">
@@ -70,53 +79,44 @@ const PatientsPage = () => {
             </thead>
             <tbody>
               {filteredPatients.map((patient) => (
-                <tr key={patient.id_paciente}>
-                  <td className="px-4 py-2 border">{patient.nombre}</td>
-                  <td className="px-4 py-2 border">{patient.apellido}</td>
-                  <td className="px-4 py-2 border">{patient.dni}</td>
-                  <td className="px-4 py-2 border">{patient.domicilio}</td>
-                  <td className="px-4 py-2 border">{patient.telefono}</td>
-                  {!showDisabled && (
-                    <td className="px-4 py-2 flex border justify-center">
-                      <Button
-                          size="lg"
-                          variant="default"
-                          className=" text-xl bg-orange-500 text-white text-[1.3rem] h-12 flex rounded-lg" // Botón más ovalado
-                          //onClick={() => handleNavigation(PATH_OPTIONS.medicalRecord)}
-                      >
-                        Ver
-                      </Button>
-                    </td>
-                  )}
-                </tr>
+                  <tr
+                      key={patient.id_paciente}
+                      onClick={() => getInformationPatient(patient)}
+                      className="cursor-pointer"
+                  >
+                    <td className="px-4 py-2 border">{patient.nombre}</td>
+                    <td className="px-4 py-2 border">{patient.apellido}</td>
+                    <td className="px-4 py-2 border">{patient.dni}</td>
+                    <td className="px-4 py-2 border">{patient.domicilio}</td>
+                    <td className="px-4 py-2 border">{patient.telefono}</td>
+                    {!showDisabled && (
+                        <td className="px-4 py-2 border text-center">
+                          <Button
+                              size="lg"
+                              variant="default"
+                              className={`text-xl text-white text-[1.3rem] ${ patient.hasFichaMedica ? "bg-orange-500" : "bg-gray-800" }`}
+                                onClick={(event) => {
+                                event.stopPropagation();
+                                if (patient.id_paciente !== undefined) {
+                                  handleFetchFichaMedica(patient.id_paciente);
+                                }
+                              }}
+                          >
+                            {patient.hasFichaMedica ? "Ver" : "Cargar"}
+                          </Button>
+                        </td>
+                    )}
+                  </tr>
               ))}
             </tbody>
           </table>
         </div>
-
-        {showConfirmMessage && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
-          <div className="bg-gray-100 p-6 rounded-lg">
-            <p className="text-lg mb-4">¿Seguro que desea eliminar al paciente seleccionado?</p>
-            <div className="flex justify-end space-x-4">
-              <Button
-                variant="default"
-                className="bg-red-500 text-white px-4 py-2 rounded"
-                onClick={() => setShowConfirmMessage(false)} // Cierra el modal sin eliminar
-              >
-                Cancelar
-              </Button>
-              <Button
-                variant="default"
-                className="bg-black text-white px-4 py-2 rounded"
-                onClick={handleDeletePatient} // Confirma la eliminación
-              >
-                Confirmar
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+        <IconButton 
+        onClick={handleSettingsClick}
+        className="fixed top-20 right-4"
+      >
+        <SettingsIcon />
+      </IconButton>      <main className="ml-64 p-8"></main>
       </div>
   );
 };

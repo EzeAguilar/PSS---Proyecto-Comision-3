@@ -3,11 +3,13 @@ import { useRouter } from "next/navigation";
 import { PATH_OPTIONS } from "@/app/lib/utils";
 import { useState } from "react";
 import { Button } from "../components/ui/button";
-import { useParams } from "next/navigation";
+import {useParams} from "next/navigation";
+
 const Sidebar = () => {
   const router = useRouter();
   const params = useParams();
-  const id = parseInt(params.id as string, 10); 
+  const id = params.id;
+
   const [activePath, setActivePath] = useState<string | null>(null);
 
   const handleNavigation = (path: string) => {

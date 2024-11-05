@@ -6,15 +6,18 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
     patients = "/admin",
     editPatient = "/admin/edit-patient",
     doctors = "/admin/doctors",
+
+    nuevaCita = "/admin/nueva-cita",
     calendar = "/admin/calendar",
     newPatient = "/admin/new-patient",
     newDoctor = "new-doctor",
     editDoctor = "edit-doctor",
     doctorPatients = "`/doctor/${id}`",
     doctorCalendar = "/doctor/calendar",
-    appointments = "/patient",
-    scheduleAppointment = "/patient/new-appointment",
-    patientDoctors = "/patient/doctors"
+
+    appointments = "/patient/${id}",
+    scheduleAppointment = "/patient/${id}/new-appointment",
+    patientDoctors = "/patient/${id}/doctors"
   };
 
   export type admin = {
@@ -26,6 +29,8 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
   };
 
   export type Patient = {
+  
+    
     id_paciente: number | undefined;
     nombre: string;
     dni: number | undefined;
@@ -37,6 +42,8 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
     email: string;
     deshabilitado: boolean;
 };
+
+
 
 export type Doctor = {
   id_medico: number | undefined;
@@ -58,8 +65,30 @@ export type Horario = {
   dia: string;
   inicio: string;
   fin: string;
-  activo: boolean;
+  deshabilitado: boolean;
+  activo: boolean;    //activo es un parámetro en horarios form que indica que el horario ingresado tiene formato correcto
 };
+
+export type Cita = {
+    fecha: string;
+    id_medico: number | undefined;
+    id_paciente: number | undefined;
+    inicio: string;
+    deshabilitado: boolean;
+
+}
+
+export type ficha_medica ={
+  id_ficha: number;
+  id_paciente: number;
+  id_medico: number;
+  alergias: string;
+  diagnosticos: string;
+  tratamientos: string;
+  ultima_modificacion: Date;
+  medicamentos: string;
+  deshabilitado: boolean;  
+}
 
 export const diasSemana = [
   { dia: 'L', nombre: 'Lunes' },
@@ -70,3 +99,41 @@ export const diasSemana = [
   { dia: 'S', nombre: 'Sábado' },
   { dia: 'D', nombre: 'Domingo' },
 ];
+
+export const generatePagination = (currentPage: number, totalPages: number) => {
+  // If the total number of pages is 7 or less,
+  // display all pages without any ellipsis.
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  // If the current page is among the first 3 pages,
+  // show the first 3, an ellipsis, and the last 2 pages.
+  if (currentPage <= 3) {
+    return [1, 2, 3, '...', totalPages - 1, totalPages];
+  }
+
+  // If the current page is among the last 3 pages,
+  // show the first 2, an ellipsis, and the last 3 pages.
+  if (currentPage >= totalPages - 2) {
+    return [1, 2, '...', totalPages - 2, totalPages - 1, totalPages];
+  }
+
+  // If the current page is somewhere in the middle,
+  // show the first page, an ellipsis, the current page and its neighbors,
+  // another ellipsis, and the last page.
+  return [
+    1,
+    '...',
+    currentPage - 1,
+    currentPage,
+    currentPage + 1,
+    '...',
+    totalPages,
+  ];
+};
+
+export function convertDateFormat(dateStr: string): string {
+  const [day, month, year] = dateStr.split('/');
+  return `${year}-${month}-${day}`;
+}

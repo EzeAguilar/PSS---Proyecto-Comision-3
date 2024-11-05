@@ -1,7 +1,7 @@
 "use client"
 import { Button } from "./components/ui/button"
 import { Input } from "./components/ui/input"
-import { Card, CardContent, CardFooter } from "./components/ui/card"
+import { Card, CardContent } from "./components/ui/card"
 import Link from "next/link"
 import Image from "next/image"
 import { doCredentialLogin } from "./lib/data"
@@ -13,6 +13,8 @@ export default function Component() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
+  
+  
   async function onSubmit(event: { preventDefault: () => void; currentTarget: HTMLFormElement | undefined; }) {
     event.preventDefault();
     setError(null); 
@@ -25,7 +27,7 @@ export default function Component() {
         const response = await doCredentialLogin(mail, password);
    
         
-          
+
       if (response) {
         console.log("slkfhsdf");
         if ('numero_matricula' in response) {
@@ -35,7 +37,8 @@ export default function Component() {
           console.log("admin");
             router.push("admin");
         } else {
-            router.push("patient");
+          const id = response.id_paciente;
+            router.push(`patient/${id}`);
         }
       }
       if (!response) {
@@ -44,7 +47,6 @@ export default function Component() {
       }
     
 }
-
 
   return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -78,13 +80,9 @@ export default function Component() {
             </form>
             {error && <p style={{ color: 'red' }}>{error}</p>}
           </CardContent>
-          <CardFooter className="space-y-2">
-            <Link className="text-sm text-gray-500 underline hover:no-underline" href="#">
-              ¿Olvidaste tu contraseña?
-            </Link>
-          </CardFooter>
+          
         </Card>
-        <Link className="block text-[1.6rem] text-blue-600 underline mt-4 text-center hover:no-underline" href="#">
+        <Link className="block text-[1rem] text-black-600 underline mt-4 text-center hover:no-underline" href="registro-paciente">
           Registrarse como paciente
         </Link>
 

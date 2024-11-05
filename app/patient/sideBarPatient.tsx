@@ -1,24 +1,31 @@
 'use client'
-import { useRouter } from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import { PATH_OPTIONS } from "@/app/lib/utils";
 import { useState } from "react";
 import { Button } from "../components/ui/button";
+import { IconButton } from "@mui/material";
+import { SettingsIcon } from "lucide-react";
 
 const Sidebar = () => {
   const router = useRouter();
+  const params = useParams();
+  const id = params.id;
 
   const [activePath, setActivePath] = useState<string | null>(null);
 
+  const handleSettingsClick = () => {
+    router.push(`/patient/${id}/configuracion`);
+  }
   const handleNavigation = (path: string) => {
     setActivePath(path);
     if (path === PATH_OPTIONS.appointments) {
-      router.push(`${PATH_OPTIONS.appointments}`);
+      router.push(`/patient/${id}`);
     }
     else if (path === PATH_OPTIONS.scheduleAppointment) {
-      router.push(`${PATH_OPTIONS.scheduleAppointment}`);
+      router.push(`/patient/${id}/new-appointment`);
     }
     else if (path === PATH_OPTIONS.patientDoctors) {
-      router.push(`${PATH_OPTIONS.patientDoctors}`);
+      router.push(`/patient/${id}/doctors`);
     }
   }
 
@@ -36,7 +43,6 @@ const Sidebar = () => {
             <Button
               size="lg"
               variant="link"
-              //className="text-black font-semibold"
               className={getButtonClassName(PATH_OPTIONS.appointments)}  // Aplica la clase basada en el estado
               onClick={() => handleNavigation(PATH_OPTIONS.appointments)}
             >
@@ -47,7 +53,6 @@ const Sidebar = () => {
             <Button
               size="lg"
               variant="link"
-              //className="text-gray-700 hover:text-black"
               className={getButtonClassName(PATH_OPTIONS.scheduleAppointment)}  // Aplica la clase basada en el estado
               onClick={() => handleNavigation(PATH_OPTIONS.scheduleAppointment)}
             >
@@ -58,7 +63,6 @@ const Sidebar = () => {
             <Button
               size="lg"
               variant="link"
-              //className="text-gray-700 hover:text-black"
               className={getButtonClassName(PATH_OPTIONS.patientDoctors)}  // Aplica la clase basada en el estado
               onClick={() => handleNavigation(PATH_OPTIONS.patientDoctors)}
             >
@@ -66,6 +70,9 @@ const Sidebar = () => {
             </Button>
           </li>
         </ul>
+        <IconButton onClick={handleSettingsClick} className='top-72 left-4'>
+                <SettingsIcon />
+            </IconButton>     
       </nav>
     </aside>
   );
