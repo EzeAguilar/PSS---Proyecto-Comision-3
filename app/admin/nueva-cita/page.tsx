@@ -31,7 +31,7 @@ export default function AdminAppointmentScheduling() {
   const [showAlertDialog, setShowAlertDialog] = useState(false)
   const [alertMessage, setAlertMessage] = useState('')
   const [showWarningDialog, setShowWarningDialog] = useState(false)
-  const [isDirty, setIsDirty] = useState(false)
+  const [isDirty, setIsDirty] = useState(false) // eslint-disable-line
 
   useEffect(() => {
     const loadData = async () => {
@@ -121,13 +121,6 @@ export default function AdminAppointmentScheduling() {
     setShowWarningDialog(false)
   }
 
-  const handleTabChange = () => {
-    if (isDirty) {
-      setShowWarningDialog(true)
-    } else {
-      router.push('/admin/patients')
-    }
-  }
 
     const changeMonth = (direction: string) => {
         if (direction === 'prev') {
