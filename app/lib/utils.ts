@@ -14,9 +14,10 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
     editDoctor = "edit-doctor",
     doctorPatients = "`/doctor/${id}`",
     doctorCalendar = "/doctor/calendar",
-    appointments = "/patient",
-    scheduleAppointment = "/patient/new-appointment",
-    patientDoctors = "/patient/doctors"
+
+    appointments = "/patient/${id}",
+    scheduleAppointment = "/patient/${id}/new-appointment",
+    patientDoctors = "/patient/${id}/doctors"
   };
 
   export type admin = {
@@ -68,11 +69,12 @@ export type Horario = {
 };
 
 export type Cita = {
-  fecha: string;
-  id_medico: number;
-  id_paciente: number;
-  inicio: string;
-  deshabilitado: boolean;
+    fecha: string;
+    id_medico: number | undefined;
+    id_paciente: number | undefined;
+    inicio: string;
+    deshabilitado: boolean;
+
 }
 
 export const diasSemana = [
