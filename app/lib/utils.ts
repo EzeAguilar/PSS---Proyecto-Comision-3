@@ -78,6 +78,18 @@ export type Cita = {
 
 }
 
+export type ficha_medica ={
+  id_ficha: number;
+  id_paciente: number;
+  id_medico: number;
+  alergias: string;
+  diagnosticos: string;
+  tratamientos: string;
+  ultima_modificacion: Date;
+  medicamentos: string;
+  deshabilitado: boolean;  
+}
+
 export const diasSemana = [
   { dia: 'L', nombre: 'Lunes' },
   { dia: 'Ma', nombre: 'Martes' },
@@ -120,3 +132,8 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
     totalPages,
   ];
 };
+
+export function convertDateFormat(dateStr: string): string {
+  const [day, month, year] = dateStr.split('/');
+  return `${year}-${month}-${day}`;
+}

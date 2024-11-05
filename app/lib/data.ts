@@ -1,10 +1,8 @@
 "use server"
 import { sql } from "@vercel/postgres";
-import {Horario, Patient, admin, Cita} from "./utils";
-import { Doctor } from "./utils";
-import { unstable_noStore as noStore} from 'next/cache';
+import {Doctor, Horario, Patient, admin, Cita, ficha_medica} from "./utils";
+import { unstable_noStore as noStore } from 'next/cache';
 import bcrypt from 'bcrypt';
-
 
 export async function doCredentialLogin(mail: string, pass: string): Promise<Doctor | Patient | admin | null> {
     noStore();
@@ -583,7 +581,29 @@ export async function verifyAndChangePassword(id: number, currentPass: string, n
     `;
   
     return true;
-  }
+  } 
 
-
-
+export async function fetchFichaMedica(id_paciente: number): Promise<ficha_medica> {
+    noStore();
+    const result = await sql<ficha_medica>`
+    SELECT * FROM ficha_medica WHERE id_ficha = ${id_paciente}
+    `;
+    return result.rows[0];
+}
+export async function editFichaMedica(ficha: ficha_medica): Promise<void> {
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0]; // Get just the date part (YYYY-MM-DD)
+    
+    await sql`
+    UPDATE ficha_medica
+    SET alergias = ${ficha.alergias}, diagnosticos = ${ficha.diagnosticos}, tratamientos = ${ficha.tratamientos}, medicamentos = ${ficha.medicamentos}, ultima_modificacion = ${formattedDate}, deshabilitado = false
+    WHERE ID_Paciente = ${ficha.id_paciente}
+    `;
+}
+export async function deshabilitarFichaMedica(id_paciente: number): Promise<void> {
+    await sql`
+    UPDATE ficha_medica
+    SET deshabilitado = true
+    WHERE id_paciente = ${id_paciente}
+    `;
+}

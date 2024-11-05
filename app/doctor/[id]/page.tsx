@@ -2,15 +2,20 @@
 import { IconButton } from "@mui/material";
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Button } from "@/app/components/ui/button";
-import {Patient} from "@/app/lib/utils";
+import { Patient } from "@/app/lib/utils";
 import { useRouter } from "next/navigation";
-import {useEffect, useState} from "react";
-import {fetchAllDoctorPatients} from "@/app/lib/data";
+import { useEffect, useState} from "react";
+import { fetchAllDoctorPatients, fetchFichaMedica} from "@/app/lib/data";
 import { useParams } from "next/navigation";
+
+
+interface PatientWithFichaStatus extends Patient {
+  hasFichaMedica: boolean;
+}
 
 const PatientsPage = () => {
   const router = useRouter();
-  const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
+  const [filteredPatients, setFilteredPatients] = useState<PatientWithFichaStatus[]>([]);
   const [showDisabled] = useState(false);
   const params = useParams()
   const id = parseInt(params.id as string, 10);
@@ -19,15 +24,35 @@ const PatientsPage = () => {
     const loadPatients = async () => {
       
       const allPatients = await fetchAllDoctorPatients(id);
-      console.log("Datos de todos los pacientes:", allPatients);
-      setFilteredPatients(allPatients.filter(patient => patient.deshabilitado === showDisabled));
-      console.log(allPatients[0].apellido);
+
+      const patientsWithFichaStatus = await Promise.all(
+        allPatients.map(async (patient) => {
+          if (!patient.id_paciente) {
+            console.log("Error: Paciente sin ID");
+            return patient;
+          }
+      
+          const fichaMedica = await fetchFichaMedica(patient.id_paciente);
+          return {
+            ...patient,
+            hasFichaMedica: !!fichaMedica && !fichaMedica.deshabilitado, // false if ficha_medica doesn't exist or if fichaMedica.deshabilitado is true
+          };
+        })
+      );
+      
+
+      setFilteredPatients(patientsWithFichaStatus.filter((patient): patient is PatientWithFichaStatus => patient.deshabilitado === showDisabled));
+      console.log(patientsWithFichaStatus[0].apellido);
     };
     loadPatients();
   }, [showDisabled, id]);
 
     const getInformationPatient = (patient: Patient) => {
         router.push(`/doctor/${id}/patient-information/${patient.id_paciente}`);
+    };
+    
+    const handleFetchFichaMedica = async (id_paciente: number) => {
+        router.push(`/doctor/${id}/patient-medicalRecord/${id_paciente}`);
     };
 
   const handleSettingsClick = () => {
@@ -38,15 +63,6 @@ const PatientsPage = () => {
       <div className="p-4">
         <div className="flex items-center mb-4">
           <h1 className="text-3xl mr-44">Pacientes</h1> {/* Espacio a la derecha */}
-
-          <Button
-              size="lg"
-              variant="default"
-              className=" absolute right-0 mr-44 bg-red-500 text-white text-[1.3rem] px-10 h-12 flex items-center rounded-lg" // Botón más ovalado
-              //onClick={() => handleNavigation(PATH_OPTIONS.doctorNewPatient)}
-          >
-            Agregar
-          </Button>
         </div>
 
         <div className="overflow-x-auto">
@@ -78,13 +94,15 @@ const PatientsPage = () => {
                           <Button
                               size="lg"
                               variant="default"
-                              className=" text-xl bg-orange-500 text-white text-[1.3rem]" // Botón más ovalado
-                              onClick={(event) => {
+                              className={`text-xl text-white text-[1.3rem] ${ patient.hasFichaMedica ? "bg-orange-500" : "bg-gray-800" }`}
+                                onClick={(event) => {
                                 event.stopPropagation();
-                                //handleConfirm(patient.id_paciente);
+                                if (patient.id_paciente !== undefined) {
+                                  handleFetchFichaMedica(patient.id_paciente);
+                                }
                               }}
                           >
-                            Ver
+                            {patient.hasFichaMedica ? "Ver" : "Cargar"}
                           </Button>
                         </td>
                     )}
