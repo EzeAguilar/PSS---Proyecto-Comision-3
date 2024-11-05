@@ -5,9 +5,8 @@ import { useEffect, useState } from "react";
 import { deleteCita, fetchCitasPatient, findDoctorById} from "@/app/lib/data";
 import { useParams } from "next/navigation";
 import { Cita } from "@/app/lib/utils";
-import { IconButton } from "@mui/material";
-import SettingsIcon from '@mui/icons-material/Settings';
-import { useRouter } from "next/navigation";
+
+
 
 const PatientsPage = () => {
     const params = useParams();
@@ -17,7 +16,7 @@ const PatientsPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6;
     const [doctorMap, setDoctorMap] = useState<{ [key: number]: string }>({});
-    const router = useRouter();
+
 
     useEffect(() => {
         loadPatientDates();
