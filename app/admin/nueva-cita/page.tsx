@@ -6,8 +6,8 @@ import { Button } from '@/app/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter} from '@/app/components/ui/dialog'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/app/components/ui/alert-dialog'
-import { fetchAllCitas, fetchAllDoctors, fetchAllPatients, createCita, checkCitaAvailability } from "@/app/lib/data"
-import { Cita, Doctor, Patient } from "@/app/lib/utils"
+import { fetchAllCitas, fetchAllDoctors, fetchAllPatients, createCita, checkCitaAvailability, fetchHorarios } from "@/app/lib/data"
+import { Cita, Doctor, Patient, Horario } from "@/app/lib/utils"
 
 const months = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -32,6 +32,7 @@ export default function AdminAppointmentScheduling() {
   const [alertMessage, setAlertMessage] = useState('')
   const [showWarningDialog, setShowWarningDialog] = useState(false)
   const [isDirty, setIsDirty] = useState(false) // eslint-disable-line
+  const [doctorSchedule, setDoctorSchedule] = useState<Horario[]>([])
 
   useEffect(() => {
     const loadData = async () => {
@@ -46,17 +47,30 @@ export default function AdminAppointmentScheduling() {
   }, [])
 
   const generateTimeSlots = () => {
-    const slots = []
-    const startHour = 8 // Start at 8 AM
-    const endHour = 20 // End at 8 PM
+    if (!selectedDate || !doctorSchedule.length) return [];
     
-    for (let hour = startHour; hour < endHour; hour++) {
-      for (let minute = 0; minute < 60; minute += 20) {
-        const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
-        slots.push(time)
+    const dayName = daysOfWeek[selectedDate.getDay()];
+    const dayMapping: { [key: string]: string } = {
+      'Do': 'D', 'Lu': 'L', 'Ma': 'Ma', 'Mi': 'Mi', 'Ju': 'J', 'Vi': 'V', 'Sa': 'S'
+    };
+    
+    const doctorHorario = doctorSchedule.find(h => h.dia === dayMapping[dayName]);
+    if (!doctorHorario) return [];
+
+    const slots = [];
+    const [startHour, startMinute] = doctorHorario.inicio.split(':').map(Number);
+    const [endHour, endMinute] = doctorHorario.fin.split(':').map(Number);
+    
+    for (let hour = startHour; hour <= endHour; hour++) {
+      for (let minute = (hour === startHour ? startMinute : 0); 
+           minute < (hour === endHour ? endMinute : 60); 
+           minute += 20) {
+        const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+        slots.push(time);
       }
     }
-    return slots
+    
+    return slots;
   }
 
   const handleDateClick = async (date: Date) => {
@@ -142,7 +156,11 @@ export default function AdminAppointmentScheduling() {
         const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
         const calendar: React.ReactNode[] = [];
 
-        // Add day headers
+        // Mapear días de la semana a formato compatible con la base de datos
+        const dayMapping: { [key: string]: string } = {
+          'Do': 'D', 'Lu': 'L', 'Ma': 'Ma', 'Mi': 'Mi', 'Ju': 'J', 'Vi': 'V', 'Sa': 'S'
+        };
+
         daysOfWeek.forEach(day => {
             calendar.push(
                 <div key={`header-${day}`} className="text-center font-bold p-2">
@@ -151,26 +169,34 @@ export default function AdminAppointmentScheduling() {
             );
         });
 
-        // Add empty cells for days before the first day of the month
         for (let i = 0; i < firstDayOfMonth; i++) {
             calendar.push(<div key={`empty-${i}`} className="p-4"></div>);
         }
 
-        // Add calendar days
         for (let day = 1; day <= daysInMonth; day++) {
             const date = new Date(currentYear, currentMonth, day);
             const isToday = new Date().toDateString() === date.toDateString();
             const isPast = date < new Date(new Date().setHours(0, 0, 0, 0));
             const isSelected = selectedDate?.toDateString() === date.toDateString();
+            
+            // Verificar si el día está disponible en el horario del médico
+            const dayName = daysOfWeek[date.getDay()];
+            const isDoctorAvailable = doctorSchedule.some(
+              horario => horario.dia === dayMapping[dayName]
+            );
 
             calendar.push(
                 <Button
                     key={`day-${day}`}
                     variant={isSelected ? "default" : "outline"}
-                    className={`p-4 w-full ${isToday ? "border-blue-500" : ""} 
-                              ${isPast ? "opacity-50" : ""}
-                              ${isSelected ? "bg-black text-white hover:bg-gray-800" : "hover:bg-gray-100"}`}
-                    disabled={isPast}
+                    className={`p-4 w-full 
+                      ${isToday ? "border-blue-500" : ""} 
+                      ${isPast ? "opacity-50" : ""}
+                      ${isSelected ? "bg-black text-white hover:bg-gray-800" : ""}
+                      ${isDoctorAvailable && !isPast ? "bg-green-100 hover:bg-green-200" : ""}
+                      ${!isDoctorAvailable || isPast ? "cursor-not-allowed" : "hover:bg-gray-100"}`
+                    }
+                    disabled={!isDoctorAvailable || isPast}
                     onClick={() => handleDateClick(date)}
                 >
                     {day}
@@ -200,9 +226,16 @@ export default function AdminAppointmentScheduling() {
             ))}
           </SelectContent>
         </Select>
-        <Select onValueChange={(value: any) => { // eslint-disable-line
-          setSelectedDoctor(doctors.find(d => d.id_medico?.toString() === value) || null)
-          setIsDirty(true)
+        <Select onValueChange={async (value: any) => { // eslint-disable-line
+          const selectedDoc = doctors.find(d => d.id_medico?.toString() === value) || null;
+          setSelectedDoctor(selectedDoc);
+          if (selectedDoc?.id_medico) {
+            const horarios = await fetchHorarios(selectedDoc.id_medico);
+            setDoctorSchedule(horarios);
+          } else {
+            setDoctorSchedule([]);
+          }
+          setIsDirty(true);
         }}>
           <SelectTrigger className="bg-white">
             <SelectValue placeholder="Seleccionar Médico" />
