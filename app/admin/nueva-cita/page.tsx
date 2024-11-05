@@ -31,7 +31,7 @@ export default function AdminAppointmentScheduling() {
   const [showAlertDialog, setShowAlertDialog] = useState(false)
   const [alertMessage, setAlertMessage] = useState('')
   const [showWarningDialog, setShowWarningDialog] = useState(false)
-  const [isDirty, setIsDirty] = useState(false)
+  const [isDirty, setIsDirty] = useState(false) // eslint-disable-line
 
   useEffect(() => {
     const loadData = async () => {
@@ -70,7 +70,7 @@ export default function AdminAppointmentScheduling() {
 
     try {
       const dateStr = selectedDate.toISOString().split('T')[0]
-      const isAvailable = await checkCitaAvailability(dateStr, selectedTime, selectedDoctor.id_medico)
+      const isAvailable = await checkCitaAvailability(dateStr, selectedTime, selectedDoctor.id_medico ?? 0)
 
       if (!isAvailable) {
         setAlertMessage('El horario seleccionado ya no está disponible.')
@@ -79,8 +79,8 @@ export default function AdminAppointmentScheduling() {
       }
 
       const newCita: Cita = {
-        id_paciente: selectedPatient.id_paciente,
-        id_medico: selectedDoctor.id_medico,
+        id_paciente: selectedPatient.id_paciente ?? 0,
+        id_medico: selectedDoctor.id_medico ?? 0,
         fecha: dateStr,
         inicio: selectedTime,
         deshabilitado: false
@@ -116,14 +116,6 @@ export default function AdminAppointmentScheduling() {
 
   const handleWarningClose = () => {
     setShowWarningDialog(false)
-  }
-
-  const handleTabChange = () => {
-    if (isDirty) {
-      setShowWarningDialog(true)
-    } else {
-      router.push('/admin/patients')
-    }
   }
 
     const changeMonth = (direction: string) => {
@@ -193,8 +185,8 @@ export default function AdminAppointmentScheduling() {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Nueva Cita</h1>
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <Select onValueChange={(value) => {
-          setSelectedPatient(patients.find(p => p.id_paciente.toString() === value) || null)
+        <Select onValueChange={(value : any) => { // eslint-disable-line
+          setSelectedPatient(patients.find(p => p.id_paciente?.toString() === value) || null)
           setIsDirty(true)
         }}>
           <SelectTrigger className="bg-white">
@@ -202,14 +194,14 @@ export default function AdminAppointmentScheduling() {
           </SelectTrigger>
           <SelectContent className='bg-gray-200 text-black'>
             {patients.map((patient) => (
-              <SelectItem key={patient.id_paciente} value={patient.id_paciente.toString()}>
+              <SelectItem key={patient.id_paciente} value={patient.id_paciente? patient.id_paciente.toString() : '' }>
                 {patient.nombre}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <Select onValueChange={(value) => {
-          setSelectedDoctor(doctors.find(d => d.id_medico.toString() === value) || null)
+        <Select onValueChange={(value: any) => { // eslint-disable-line
+          setSelectedDoctor(doctors.find(d => d.id_medico?.toString() === value) || null)
           setIsDirty(true)
         }}>
           <SelectTrigger className="bg-white">
