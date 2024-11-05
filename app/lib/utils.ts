@@ -70,8 +70,6 @@ export type Horario = {
 };
 
 export type Cita = {
-    id_medico: number,
-    id_paciente: number,
     fecha: string;
     id_medico: number | undefined;
     id_paciente: number | undefined;
