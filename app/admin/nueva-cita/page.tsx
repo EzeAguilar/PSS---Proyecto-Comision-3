@@ -6,8 +6,8 @@ import { Button } from '@/app/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter} from '@/app/components/ui/dialog'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/app/components/ui/alert-dialog'
-import { fetchAllCitas, fetchAllDoctors, fetchAllPatients, createCita, checkCitaAvailability } from "@/app/lib/data"
-import { Cita, Doctor, Patient } from "@/app/lib/utils"
+import { fetchAllCitas, fetchAllDoctors, fetchAllPatients, createCita, checkCitaAvailability, fetchHorarios } from "@/app/lib/data"
+import { Cita, Doctor, Patient, Horario } from "@/app/lib/utils"
 
 const months = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -33,6 +33,8 @@ export default function AdminAppointmentScheduling() {
   const [showWarningDialog, setShowWarningDialog] = useState(false)
   const [isDirty, setIsDirty] = useState(false) // eslint-disable-line
 
+  const [doctorSchedule, setDoctorSchedule] = useState<Horario[]>([])
+
   useEffect(() => {
     const loadData = async () => {
       const allDates = await fetchAllCitas()
@@ -46,17 +48,30 @@ export default function AdminAppointmentScheduling() {
   }, [])
 
   const generateTimeSlots = () => {
-    const slots = []
-    const startHour = 8 // Start at 8 AM
-    const endHour = 20 // End at 8 PM
+    if (!selectedDate || !doctorSchedule.length) return [];
     
-    for (let hour = startHour; hour < endHour; hour++) {
-      for (let minute = 0; minute < 60; minute += 20) {
-        const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
-        slots.push(time)
+    const dayName = daysOfWeek[selectedDate.getDay()];
+    const dayMapping: { [key: string]: string } = {
+      'Do': 'D', 'Lu': 'L', 'Ma': 'Ma', 'Mi': 'Mi', 'Ju': 'J', 'Vi': 'V', 'Sa': 'S'
+    };
+    
+    const doctorHorario = doctorSchedule.find(h => h.dia === dayMapping[dayName]);
+    if (!doctorHorario) return [];
+
+    const slots = [];
+    const [startHour, startMinute] = doctorHorario.inicio.split(':').map(Number);
+    const [endHour, endMinute] = doctorHorario.fin.split(':').map(Number);
+    
+    for (let hour = startHour; hour <= endHour; hour++) {
+      for (let minute = (hour === startHour ? startMinute : 0); 
+           minute < (hour === endHour ? endMinute : 60); 
+           minute += 20) {
+        const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+        slots.push(time);
       }
     }
-    return slots
+    
+    return slots;
   }
 
   const handleDateClick = async (date: Date) => {
@@ -70,8 +85,7 @@ export default function AdminAppointmentScheduling() {
 
     try {
       const dateStr = selectedDate.toISOString().split('T')[0]
-      if (!selectedDoctor.id_medico) return;
-      const isAvailable = await checkCitaAvailability(dateStr, selectedTime, selectedDoctor.id_medico)
+      const isAvailable = await checkCitaAvailability(dateStr, selectedTime, selectedDoctor.id_medico ?? 0)
 
       if (!isAvailable) {
         setAlertMessage('El horario seleccionado ya no está disponible.')
@@ -82,8 +96,8 @@ export default function AdminAppointmentScheduling() {
       if (!selectedPatient.id_paciente || !selectedDoctor.id_medico) return;
 
       const newCita: Cita = {
-        id_paciente: selectedPatient.id_paciente,
-        id_medico: selectedDoctor.id_medico,
+        id_paciente: selectedPatient.id_paciente ?? 0,
+        id_medico: selectedDoctor.id_medico ?? 0,
         fecha: dateStr,
         inicio: selectedTime,
         deshabilitado: false
@@ -113,14 +127,13 @@ export default function AdminAppointmentScheduling() {
   const handleAlertClose = () => {
     setShowAlertDialog(false)
     if (alertMessage.includes('éxito')) {
-      router.push('/admin/patients')
+      router.push('/admin/calendar')
     }
   }
 
   const handleWarningClose = () => {
     setShowWarningDialog(false)
   }
-
 
     const changeMonth = (direction: string) => {
         if (direction === 'prev') {
@@ -146,7 +159,11 @@ export default function AdminAppointmentScheduling() {
         const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
         const calendar: React.ReactNode[] = [];
 
-        // Add day headers
+        // Mapear días de la semana a formato compatible con la base de datos
+        const dayMapping: { [key: string]: string } = {
+          'Do': 'D', 'Lu': 'L', 'Ma': 'Ma', 'Mi': 'Mi', 'Ju': 'J', 'Vi': 'V', 'Sa': 'S'
+        };
+
         daysOfWeek.forEach(day => {
             calendar.push(
                 <div key={`header-${day}`} className="text-center font-bold p-2">
@@ -155,26 +172,34 @@ export default function AdminAppointmentScheduling() {
             );
         });
 
-        // Add empty cells for days before the first day of the month
         for (let i = 0; i < firstDayOfMonth; i++) {
             calendar.push(<div key={`empty-${i}`} className="p-4"></div>);
         }
 
-        // Add calendar days
         for (let day = 1; day <= daysInMonth; day++) {
             const date = new Date(currentYear, currentMonth, day);
             const isToday = new Date().toDateString() === date.toDateString();
             const isPast = date < new Date(new Date().setHours(0, 0, 0, 0));
             const isSelected = selectedDate?.toDateString() === date.toDateString();
+            
+            // Verificar si el día está disponible en el horario del médico
+            const dayName = daysOfWeek[date.getDay()];
+            const isDoctorAvailable = doctorSchedule.some(
+              horario => horario.dia === dayMapping[dayName]
+            );
 
             calendar.push(
                 <Button
                     key={`day-${day}`}
                     variant={isSelected ? "default" : "outline"}
-                    className={`p-4 w-full ${isToday ? "border-blue-500" : ""} 
-                              ${isPast ? "opacity-50" : ""}
-                              ${isSelected ? "bg-black text-white hover:bg-gray-800" : "hover:bg-gray-100"}`}
-                    disabled={isPast}
+                    className={`p-4 w-full 
+                      ${isToday ? "border-blue-500" : ""} 
+                      ${isPast ? "opacity-50" : ""}
+                      ${isSelected ? "bg-black text-white hover:bg-gray-800" : ""}
+                      ${isDoctorAvailable && !isPast ? "bg-green-100 hover:bg-green-200" : ""}
+                      ${!isDoctorAvailable || isPast ? "cursor-not-allowed" : "hover:bg-gray-100"}`
+                    }
+                    disabled={!isDoctorAvailable || isPast}
                     onClick={() => handleDateClick(date)}
                 >
                     {day}
@@ -189,8 +214,8 @@ export default function AdminAppointmentScheduling() {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Nueva Cita</h1>
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <Select onValueChange={(value) => {
-          setSelectedPatient(patients.find(p => p.id_paciente !== undefined && p.id_paciente.toString() === value) || null)
+        <Select onValueChange={(value : any) => { // eslint-disable-line
+          setSelectedPatient(patients.find(p => p.id_paciente?.toString() === value) || null)
           setIsDirty(true)
         }}>
           <SelectTrigger className="bg-white">
@@ -198,15 +223,22 @@ export default function AdminAppointmentScheduling() {
           </SelectTrigger>
           <SelectContent className='bg-gray-200 text-black'>
             {patients.map((patient) => (
-              <SelectItem key={patient.id_paciente ?? ''} value={(patient.id_paciente ?? '').toString()}>
+              <SelectItem key={patient.id_paciente} value={patient.id_paciente? patient.id_paciente.toString() : '' }>
                 {patient.nombre}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <Select onValueChange={(value) => {
-          setSelectedDoctor(doctors.find(d => d.id_medico?.toString() === value) || null)
-          setIsDirty(true)
+        <Select onValueChange={async (value: any) => { // eslint-disable-line
+          const selectedDoc = doctors.find(d => d.id_medico?.toString() === value) || null;
+          setSelectedDoctor(selectedDoc);
+          if (selectedDoc?.id_medico) {
+            const horarios = await fetchHorarios(selectedDoc.id_medico);
+            setDoctorSchedule(horarios);
+          } else {
+            setDoctorSchedule([]);
+          }
+          setIsDirty(true);
         }}>
           <SelectTrigger className="bg-white">
             <SelectValue placeholder="Seleccionar Médico" />
