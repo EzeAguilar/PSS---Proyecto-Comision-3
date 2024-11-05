@@ -3,6 +3,7 @@
 import { deshabilitarFichaMedica, editFichaMedica } from "@/app/lib/data";
 import { ficha_medica, Patient, convertDateFormat } from "@/app/lib/utils";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface PatientMedicalRecordPageProps {
     patientMedicalRecord: ficha_medica;
@@ -10,7 +11,7 @@ interface PatientMedicalRecordPageProps {
 }
 
 const PatientMedicalRecordPage: React.FC<PatientMedicalRecordPageProps> = ({ patientData, patientMedicalRecord}) => {
-
+    const router = useRouter();
     const [isEditing, setIsEditing] = useState(false);
     const [editableRecord, setEditableRecord] = useState<ficha_medica>(patientMedicalRecord);
     const [showConfirmation, setShowConfirmation] = useState(false);
@@ -41,6 +42,11 @@ const PatientMedicalRecordPage: React.FC<PatientMedicalRecordPageProps> = ({ pat
         setShowConfirmation(false);
     };
     
+    const handleCancelEdit = () => {
+        console.log('cancel edit');
+        setIsEditing(false);
+        router.back();
+    }
     return (
         <div className="p-8">
             <h1 className="text-2xl font-semibold mb-2">Ficha médica</h1>
@@ -154,7 +160,7 @@ const PatientMedicalRecordPage: React.FC<PatientMedicalRecordPageProps> = ({ pat
                 <div>
                     <button
                         className="bg-gray-500 text-white py-2 px-4 mr-2 rounded-lg"
-                        onClick={() => setIsEditing(false)}
+                        onClick={() => handleCancelEdit()}
                     >
                         Cancelar
                     </button>
