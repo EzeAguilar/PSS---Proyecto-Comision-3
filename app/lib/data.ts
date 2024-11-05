@@ -350,7 +350,29 @@ export async function deleteDoctor(id: number | undefined): Promise<void> {
     }
 }
 
-
+export async function createCita(cita: Cita) {
+    try {
+      await sql`
+        INSERT INTO citas (id_paciente, id_medico, fecha, inicio, deshabilitado)
+        VALUES (${cita.id_paciente}, ${cita.id_medico}, ${cita.fecha}, ${cita.inicio}, false)
+      `;
+      return true;
+    } catch (error) {
+      console.error('Error creating appointment:', error);
+      return false;
+    }
+  }
+  
+  export async function checkCitaAvailability(fecha: string, inicio: string, id_medico: number) {
+    const result = await sql`
+      SELECT * FROM citas 
+      WHERE fecha = ${fecha} 
+      AND inicio = ${inicio} 
+      AND id_medico = ${id_medico}
+      AND deshabilitado = false
+    `;
+    return result.rows.length === 0;
+  }
 
 export async function searchDoctors(query: string): Promise<Doctor[]> {
     noStore();

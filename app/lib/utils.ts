@@ -7,6 +7,7 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
     editPatient = "/admin/edit-patient",
     doctors = "/admin/doctors",
 
+    nuevaCita = "/admin/nueva-cita",
     calendar = "/admin/calendar",
     newPatient = "/admin/new-patient",
     newDoctor = "new-doctor",
@@ -28,6 +29,8 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
   };
 
   export type Patient = {
+  
+    
     id_paciente: number | undefined;
     nombre: string;
     dni: number | undefined;
@@ -39,6 +42,8 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
     email: string;
     deshabilitado: boolean;
 };
+
+
 
 export type Doctor = {
   id_medico: number | undefined;
@@ -69,6 +74,7 @@ export type Cita = {
     id_paciente: number | undefined;
     inicio: string;
     deshabilitado: boolean;
+
 }
 
 export const diasSemana = [
