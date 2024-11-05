@@ -19,6 +19,7 @@ const HorarioForm = ({ horariosIniciales, onConfirm, onCancel }: HorarioFormProp
       inicio: "",
       fin: "",
       activo: false,
+      deshabilitado: false
     }));
   
     // Si existen horarios iniciales, actualizarlos en base a los días de la semana

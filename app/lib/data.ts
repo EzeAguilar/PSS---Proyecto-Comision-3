@@ -349,6 +349,29 @@ export async function deleteDoctor(id: number | undefined): Promise<void> {
     }
 }
 
+export async function createCita(cita: Cita) {
+    try {
+      await sql`
+        INSERT INTO citas (id_paciente, id_medico, fecha, inicio, deshabilitado)
+        VALUES (${cita.id_paciente}, ${cita.id_medico}, ${cita.fecha}, ${cita.inicio}, false)
+      `;
+      return true;
+    } catch (error) {
+      console.error('Error creating appointment:', error);
+      return false;
+    }
+  }
+  
+  export async function checkCitaAvailability(fecha: string, inicio: string, id_medico: number) {
+    const result = await sql`
+      SELECT * FROM citas 
+      WHERE fecha = ${fecha} 
+      AND inicio = ${inicio} 
+      AND id_medico = ${id_medico}
+      AND deshabilitado = false
+    `;
+    return result.rows.length === 0;
+  }
 
 
 export async function searchDoctors(query: string): Promise<Doctor[]> {
@@ -412,6 +435,129 @@ export async function fechCitasDoctor(id: number): Promise<Cita[]> {
     `;
     return result.rows;
 }
+
+export async function fetchDoctorsWithCitasForDate(date: Date): Promise<Doctor[]> {
+    // Formatear la fecha a YYYY-MM-DD para la consulta SQL
+    const formattedDate = date.toISOString().split('T')[0];
+
+    const result = await sql<Doctor>`
+    SELECT DISTINCT m.*
+    FROM medicos m
+    JOIN citas c ON m.ID_Medico = c.ID_Medico
+    WHERE c.fecha = ${formattedDate} and c.deshabilitado = false
+    `;
+
+    return result.rows;
+}
+
+export async function cancelCita(cita: Cita): Promise<void> {
+    await sql`
+        UPDATE citas 
+        SET deshabilitado = true
+        WHERE fecha = ${cita.fecha} 
+          AND ID_Medico = ${cita.id_medico} 
+          AND ID_Paciente = ${cita.id_paciente};
+    `;
+    console.log("Cita cancelada con éxito");
+}
+
+export async function editCita(cita: Cita, fechaAnterior: string, id_paciente_Anterior: number): Promise<void> {
+    await sql`
+        UPDATE citas 
+        SET fecha = ${cita.fecha}, 
+            inicio = ${cita.inicio}, 
+            ID_Paciente = ${cita.id_paciente}
+        WHERE fecha = ${fechaAnterior} 
+          AND ID_Medico = ${cita.id_medico} 
+          AND ID_Paciente = ${id_paciente_Anterior};
+    `;
+    console.log("Cita editada con éxito");
+}
+
+export async function fetchCitasPatient(id: number): Promise<Cita[]> {
+    noStore();
+    const result = await sql<Cita>`
+    SELECT * FROM citas WHERE ID_Paciente = ${id}
+    `;
+    return result.rows;
+}
+
+export async function cancelDate(fecha: string, id_paciente: number | undefined, id_medico: number | undefined): Promise<void> {
+    await sql`
+    UPDATE citas
+    SET deshabilitado = true
+    WHERE fecha = ${fecha} AND ID_Paciente = ${id_paciente} AND ID_Medico = ${id_medico}
+    `;
+}
+
+export async function deleteCita(fecha: string, id_paciente: number | undefined, id_medico: number | undefined): Promise<void> {
+    await sql`
+    DELETE FROM citas
+    WHERE fecha = ${fecha} AND ID_Paciente = ${id_paciente} AND ID_Medico = ${id_medico}
+    `;
+}
+
+export async function fetchAllPatientDoctors(id: number): Promise<Doctor[]> {
+    noStore();
+    const result = await sql<Doctor>`
+    SELECT * FROM medicos WHERE id_medico IN (SELECT id_medico FROM es_paciente_de WHERE id_paciente = ${id})
+    `;
+    return result.rows;
+}
+
+export async function findDoctorById(id: number | undefined): Promise<Doctor> {
+    noStore();
+    const result = await sql<Doctor>`
+    SELECT * FROM medicos WHERE id_medico = ${id}
+    `;
+    return result.rows[0];
+}
+
+export async function fetchAllDoctorTimes(id: number | undefined): Promise<Horario[]> {
+    noStore();
+    const result = await sql<Horario>`
+    SELECT * FROM horarios WHERE id_medico = ${id}
+    `;
+    return result.rows;
+}
+
+export async function insertPatientDate(cita: {
+    fecha: string;
+    id_medico: number | undefined;
+    deshabilitado: boolean;
+    inicio: string | null;
+    id_paciente: number | undefined
+}): Promise<void> {
+    await sql`
+    INSERT INTO citas (fecha, ID_Medico, ID_Paciente, inicio, deshabilitado)
+    VALUES (${cita.fecha}, ${cita.id_medico}, ${cita.id_paciente}, ${cita.inicio}, ${cita.deshabilitado})
+    `;
+}
+
+export async function verifyAndChangePassword(id: number, currentPass: string, newPass: string): Promise<boolean> {
+    
+    const doctor = await sql`
+      SELECT contraseña FROM medicos WHERE id_medico = ${id}
+    `;
+    
+    if (doctor.rows.length === 0) {
+      throw new Error('Doctor not found');
+    }
+  
+    const isMatch = await bcrypt.compare(currentPass, doctor.rows[0].contraseña);
+    if (!isMatch) {
+      throw new Error('Error en contraseña actual');
+    }
+  
+    const hashedNewPass = await bcrypt.hash(newPass, 10);
+    await sql`
+      UPDATE medicos
+      SET contraseña = ${hashedNewPass}
+      WHERE id_medico = ${id}
+    `;
+  
+    return true;
+  }
 
 export async function fetchFichaMedica(id_paciente: number): Promise<ficha_medica> {
     noStore();

@@ -7,15 +7,17 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
     editPatient = "/admin/edit-patient",
     doctors = "/admin/doctors",
 
+    nuevaCita = "/admin/nueva-cita",
     calendar = "/admin/calendar",
     newPatient = "/admin/new-patient",
     newDoctor = "new-doctor",
     editDoctor = "edit-doctor",
     doctorPatients = "`/doctor/${id}`",
     doctorCalendar = "/doctor/calendar",
-    appointments = "/patient",
-    scheduleAppointment = "/patient/new-appointment",
-    patientDoctors = "/patient/doctors"
+
+    appointments = "/patient/${id}",
+    scheduleAppointment = "/patient/${id}/new-appointment",
+    patientDoctors = "/patient/${id}/doctors"
   };
 
   export type admin = {
@@ -27,6 +29,8 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
   };
 
   export type Patient = {
+  
+    
     id_paciente: number | undefined;
     nombre: string;
     dni: number | undefined;
@@ -38,6 +42,8 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
     email: string;
     deshabilitado: boolean;
 };
+
+
 
 export type Doctor = {
   id_medico: number | undefined;
@@ -59,13 +65,17 @@ export type Horario = {
   dia: string;
   inicio: string;
   fin: string;
-  activo: boolean;
+  deshabilitado: boolean;
+  activo: boolean;    //activo es un parámetro en horarios form que indica que el horario ingresado tiene formato correcto
 };
 
 export type Cita = {
     fecha: string;
+    id_medico: number | undefined;
+    id_paciente: number | undefined;
     inicio: string;
     deshabilitado: boolean;
+
 }
 
 export type ficha_medica ={
