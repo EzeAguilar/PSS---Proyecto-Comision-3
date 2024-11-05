@@ -4,7 +4,6 @@ import {Doctor, Horario, Patient, admin, Cita, ficha_medica} from "./utils";
 import { unstable_noStore as noStore } from 'next/cache';
 import bcrypt from 'bcrypt';
 
-
 export async function doCredentialLogin(mail: string, pass: string): Promise<Doctor | Patient | admin | null> {
     noStore();
     
@@ -361,6 +360,31 @@ export async function createCita(cita: Cita) {
       return false;
     }
   }
+
+
+  export async function verifyAndChangePatientPassword(id: number, currentPass: string, newPass: string): Promise<boolean> {
+    const patient = await sql`
+      SELECT contraseña FROM pacientes WHERE id_paciente = ${id}
+    `;
+    
+    if (patient.rows.length === 0) {
+      throw new Error('Paciente no encontrado');
+    }
+  
+    const isMatch = await bcrypt.compare(currentPass, patient.rows[0].contraseña);
+    if (!isMatch) {
+      throw new Error('Error en contraseña actual');
+    }
+  
+    const hashedNewPass = await bcrypt.hash(newPass, 10);
+    await sql`
+      UPDATE pacientes
+      SET contraseña = ${hashedNewPass}
+      WHERE id_paciente = ${id}
+    `;
+  
+    return true;
+}
   
   export async function checkCitaAvailability(fecha: string, inicio: string, id_medico: number) {
     const result = await sql`
@@ -372,7 +396,6 @@ export async function createCita(cita: Cita) {
     `;
     return result.rows.length === 0;
   }
-
 
 export async function searchDoctors(query: string): Promise<Doctor[]> {
     noStore();
@@ -428,13 +451,14 @@ export async function fetchAllCitas(): Promise<Cita[]> {
     return result.rows;
 }
 
-export async function fechCitasDoctor(id: number): Promise<Cita[]> {
+export async function fechCitasDoctor(id: number | undefined): Promise<Cita[]> {
     noStore();
     const result = await sql<Cita>`
     SELECT * FROM citas WHERE ID_Medico = ${id}
     `;
     return result.rows;
 }
+
 
 export async function fetchDoctorsWithCitasForDate(date: Date): Promise<Doctor[]> {
     // Formatear la fecha a YYYY-MM-DD para la consulta SQL
@@ -557,7 +581,7 @@ export async function verifyAndChangePassword(id: number, currentPass: string, n
     `;
   
     return true;
-  }
+  } 
 
 export async function fetchFichaMedica(id_paciente: number): Promise<ficha_medica> {
     noStore();
