@@ -434,6 +434,6 @@ export async function deshabilitarFichaMedica(id_paciente: number): Promise<void
     await sql`
     UPDATE ficha_medica
     SET deshabilitado = true
-    WHERE ID_Paciente = ${id_paciente}
+    WHERE id_paciente = ${id_paciente}
     `;
 }
