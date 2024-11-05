@@ -60,6 +60,7 @@ export type Horario = {
   inicio: string;
   fin: string;
   deshabilitado: boolean;
+  activo: boolean;    //activo es un parámetro en horarios form que indica que el horario ingresado tiene formato correcto
 };
 
 export type Cita = {
