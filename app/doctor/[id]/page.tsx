@@ -30,14 +30,15 @@ const PatientsPage = () => {
             console.log("Error: Paciente sin ID");
             return patient;
           }
-
+      
           const fichaMedica = await fetchFichaMedica(patient.id_paciente);
           return {
             ...patient,
-            hasFichaMedica: !!fichaMedica, // true if ficha_medica exists, otherwise false
+            hasFichaMedica: !!fichaMedica && !fichaMedica.deshabilitado, // false if ficha_medica doesn't exist or if fichaMedica.deshabilitado is true
           };
         })
       );
+      
 
       setFilteredPatients(patientsWithFichaStatus.filter((patient): patient is PatientWithFichaStatus => patient.deshabilitado === showDisabled));
       console.log(patientsWithFichaStatus[0].apellido);
@@ -88,13 +89,12 @@ const PatientsPage = () => {
                           <Button
                               size="lg"
                               variant="default"
-                              className=" text-xl bg-orange-500 text-white text-[1.3rem]" // Botón más ovalado
-                              onClick={(event) => {
+                              className={`text-xl text-white text-[1.3rem] ${ patient.hasFichaMedica ? "bg-orange-500" : "bg-gray-800" }`}
+                                onClick={(event) => {
                                 event.stopPropagation();
                                 if (patient.id_paciente !== undefined) {
                                   handleFetchFichaMedica(patient.id_paciente);
                                 }
-                                //handleConfirm(patient.id_paciente);
                               }}
                           >
                             {patient.hasFichaMedica ? "Ver" : "Cargar"}

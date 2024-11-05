@@ -426,7 +426,7 @@ export async function editFichaMedica(ficha: ficha_medica): Promise<void> {
     
     await sql`
     UPDATE ficha_medica
-    SET alergias = ${ficha.alergias}, diagnosticos = ${ficha.diagnosticos}, tratamientos = ${ficha.tratamientos}, medicamentos = ${ficha.medicamentos}, ultima_modificacion = ${formattedDate}
+    SET alergias = ${ficha.alergias}, diagnosticos = ${ficha.diagnosticos}, tratamientos = ${ficha.tratamientos}, medicamentos = ${ficha.medicamentos}, ultima_modificacion = ${formattedDate}, deshabilitado = false
     WHERE ID_Paciente = ${ficha.id_paciente}
     `;
 }

@@ -2,7 +2,7 @@
 
 import { deshabilitarFichaMedica, editFichaMedica } from "@/app/lib/data";
 import { ficha_medica, Patient, convertDateFormat } from "@/app/lib/utils";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface PatientMedicalRecordPageProps {
     patientMedicalRecord: ficha_medica;
@@ -14,6 +14,12 @@ const PatientMedicalRecordPage: React.FC<PatientMedicalRecordPageProps> = ({ pat
     const [isEditing, setIsEditing] = useState(false);
     const [editableRecord, setEditableRecord] = useState<ficha_medica>(patientMedicalRecord);
     const [showConfirmation, setShowConfirmation] = useState(false);
+    
+    useEffect(() => {
+        if (patientMedicalRecord.deshabilitado) {
+            setIsEditing(true);
+        }
+    }, [patientMedicalRecord.deshabilitado]);
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -28,10 +34,7 @@ const PatientMedicalRecordPage: React.FC<PatientMedicalRecordPageProps> = ({ pat
         editFichaMedica(editableRecord);
         setIsEditing(false);
     };
-    /*
-    const handleDeshabilitar = () => {
-        deshabilitarFichaMedica(patientMedicalRecord.id_paciente);
-    }*/
+
     const confirmDeshabilitar = async () => {
         await deshabilitarFichaMedica(patientMedicalRecord.id_paciente);
         setEditableRecord({ ...editableRecord, deshabilitado: true });
@@ -118,15 +121,17 @@ const PatientMedicalRecordPage: React.FC<PatientMedicalRecordPageProps> = ({ pat
             </div>
 
             <div className="flex justify-between mt-6">
-                <button
-                    className="bg-red-500 text-white py-2 px-4 rounded-lg"
-                    //disabled={!!patientMedicalRecord.deshabilitado}
-                    onClick={() => {
-                        setShowConfirmation(true);
-                    }}
-                >
-                    Deshabilitar
-                </button>
+                {!isEditing && (
+                    <button
+                        className="bg-red-500 text-white py-2 px-4 rounded-lg"
+                        //disabled={!!patientMedicalRecord.deshabilitado}
+                        onClick={() => {
+                            setShowConfirmation(true);
+                        }}
+                    >
+                        Deshabilitar
+                    </button>
+                )}
                 {showConfirmation && (
                     <div className="modal-overlay">
                         <div className="modal-content">
