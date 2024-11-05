@@ -202,8 +202,8 @@ const SmallCalendar: React.FC<SmallCalendarProps> = ({
         if (confirmResult.isConfirmed) {
             const newDate: Cita = {
                 fecha: `${selectedDate} ${selectedTime}`,
-                id_medico: doctorID,
-                id_paciente: idPatient,
+                id_medico: doctorID ?? 0,
+                id_paciente: idPatient ?? 0,
                 inicio: selectedTime,
                 deshabilitado: false
             }

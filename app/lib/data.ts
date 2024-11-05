@@ -2,7 +2,7 @@
 import { sql } from "@vercel/postgres";
 import {Horario, Patient, admin, Cita} from "./utils";
 import { Doctor } from "./utils";
-import { unstable_noStore as noStore } from 'next/cache';
+import { unstable_noStore as noStore} from 'next/cache';
 import bcrypt from 'bcrypt';
 
 
@@ -436,6 +436,45 @@ export async function fechCitasDoctor(id: number | undefined): Promise<Cita[]> {
     return result.rows;
 }
 
+
+export async function fetchDoctorsWithCitasForDate(date: Date): Promise<Doctor[]> {
+    // Formatear la fecha a YYYY-MM-DD para la consulta SQL
+    const formattedDate = date.toISOString().split('T')[0];
+
+    const result = await sql<Doctor>`
+    SELECT DISTINCT m.*
+    FROM medicos m
+    JOIN citas c ON m.ID_Medico = c.ID_Medico
+    WHERE c.fecha = ${formattedDate} and c.deshabilitado = false
+    `;
+
+    return result.rows;
+}
+
+export async function cancelCita(cita: Cita): Promise<void> {
+    await sql`
+        UPDATE citas 
+        SET deshabilitado = true
+        WHERE fecha = ${cita.fecha} 
+          AND ID_Medico = ${cita.id_medico} 
+          AND ID_Paciente = ${cita.id_paciente};
+    `;
+    console.log("Cita cancelada con éxito");
+}
+
+export async function editCita(cita: Cita, fechaAnterior: string, id_paciente_Anterior: number): Promise<void> {
+    await sql`
+        UPDATE citas 
+        SET fecha = ${cita.fecha}, 
+            inicio = ${cita.inicio}, 
+            ID_Paciente = ${cita.id_paciente}
+        WHERE fecha = ${fechaAnterior} 
+          AND ID_Medico = ${cita.id_medico} 
+          AND ID_Paciente = ${id_paciente_Anterior};
+    `;
+    console.log("Cita editada con éxito");
+}
+
 export async function fetchCitasPatient(id: number): Promise<Cita[]> {
     noStore();
     const result = await sql<Cita>`
@@ -495,5 +534,6 @@ export async function insertPatientDate(cita: {
     VALUES (${cita.fecha}, ${cita.id_medico}, ${cita.id_paciente}, ${cita.inicio}, ${cita.deshabilitado})
     `;
 }
+
 
 
