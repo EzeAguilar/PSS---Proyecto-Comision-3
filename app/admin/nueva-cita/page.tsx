@@ -110,7 +110,7 @@ export default function AdminAppointmentScheduling() {
   const handleAlertClose = () => {
     setShowAlertDialog(false)
     if (alertMessage.includes('éxito')) {
-      router.push('/admin/patients')
+      router.push('/admin')
     }
   }
 
