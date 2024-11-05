@@ -122,3 +122,8 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
     totalPages,
   ];
 };
+
+export function convertDateFormat(dateStr: string): string {
+  const [day, month, year] = dateStr.split('/');
+  return `${year}-${month}-${day}`;
+}

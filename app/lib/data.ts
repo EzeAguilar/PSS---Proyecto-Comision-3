@@ -419,4 +419,21 @@ export async function fetchFichaMedica(id_paciente: number): Promise<ficha_medic
     SELECT * FROM ficha_medica WHERE id_ficha = ${id_paciente}
     `;
     return result.rows[0];
-  }
+}
+export async function editFichaMedica(ficha: ficha_medica): Promise<void> {
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0]; // Get just the date part (YYYY-MM-DD)
+    
+    await sql`
+    UPDATE ficha_medica
+    SET alergias = ${ficha.alergias}, diagnosticos = ${ficha.diagnosticos}, tratamientos = ${ficha.tratamientos}, medicamentos = ${ficha.medicamentos}, ultima_modificacion = ${formattedDate}
+    WHERE ID_Paciente = ${ficha.id_paciente}
+    `;
+}
+export async function deshabilitarFichaMedica(id_paciente: number): Promise<void> {
+    await sql`
+    UPDATE ficha_medica
+    SET deshabilitado = true
+    WHERE ID_Paciente = ${id_paciente}
+    `;
+}

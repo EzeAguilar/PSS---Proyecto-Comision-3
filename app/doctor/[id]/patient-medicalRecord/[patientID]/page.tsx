@@ -11,8 +11,6 @@ const PatientMedicalRecord: React.FC<PatientMedicalRecordProps> = async ({ param
   const patientMedR: ficha_medica = await fetchFichaMedica(patientID);
   const patientD: Patient = await fetchPatient(patientID);
 
-  console.log("Ficha médica obtenida:", patientMedR);
-  console.log("Datos del paciente obtenidos:", patientD);
   return (
     <div>
       <PatientMedicalRecordPage patientData={patientD} patientMedicalRecord={patientMedR} />
